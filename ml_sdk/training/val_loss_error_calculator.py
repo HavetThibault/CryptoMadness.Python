@@ -1,4 +1,5 @@
 from typing import Optional
+
 from error_calculator import ErrorCalculator
 
 

@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from ...dataset.file.file_record_struct import FileRecordStruct
-from ...dataset.model_feeder.ds_creator import DsCreator
+from ml_sdk.dataset.file.file_record_struct import FileRecordStruct
+from ml_sdk.dataset.model_feeder.ds_creator import DsCreator
 
 
 class DsCreatorBuilder:
