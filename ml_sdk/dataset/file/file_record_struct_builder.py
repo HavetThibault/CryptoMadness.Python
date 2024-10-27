@@ -1,7 +1,7 @@
-from file_record_field_type import RecordFieldType
+from ml_sdk.dataset.file.file_record_field_type import RecordFieldType
 
 
-class FileRecordStruct:
+class FileRecordStructBuilder:
     def __init__(self, fields: list[RecordFieldType]):
         self._fields = fields
 

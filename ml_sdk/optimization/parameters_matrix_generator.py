@@ -1,4 +1,4 @@
-from parameter_interval import ParameterInterval
+from ml_sdk.optimization.parameter_interval import ParameterInterval
 
 
 class ParametersMatrixGenerator:

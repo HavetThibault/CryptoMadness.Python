@@ -5,7 +5,6 @@ import threading
 import pandas as pd
 import tensorflow as tf
 
-from best_model_checkpoint import BestModelCheckpoint
 from helper_sdk.work_progress_state import WorkProgressState
 from ml_sdk.model.creator.model_creator import ModelCreator
 from ml_sdk.optimization.parameters_matrix_generator import params_set_to_str
@@ -13,8 +12,9 @@ from ml_sdk.optimization.regression.ds_transformer import DSTransformer
 from ml_sdk.optimization.regression.reg_calculator import RegCalculator
 from ml_sdk.optimization.regression.reg_frame_finder import CONST_COL
 from ml_sdk.plot.model_stats import plot_metrics
-from model_filename_mgmt import WEIGHTS_FILE_EXTENSION, MODEL_FILE_EXTENSION, get_training_epoch_stats
-from training_memory import TrainingMemory
+from ml_sdk.training.best_model_checkpoint import BestModelCheckpoint
+from ml_sdk.training.model_filename_mgmt import get_training_epoch_stats, WEIGHTS_FILE_EXTENSION, MODEL_FILE_EXTENSION
+from ml_sdk.training.training_memory import TrainingMemory
 
 
 def run_trainings(

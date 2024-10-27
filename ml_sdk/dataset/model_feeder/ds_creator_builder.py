@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from ml_sdk.dataset.file.file_record_struct import FileRecordStruct
+from ml_sdk.dataset.file.file_record_struct_builder import FileRecordStructBuilder
 from ml_sdk.dataset.model_feeder.ds_creator import DsCreator
 
 
@@ -8,7 +8,7 @@ class DsCreatorBuilder:
     def __init__(self, train_ds_path, val_ds_path, file_record_struct, batch_size):
         self._train_ds_path: str = train_ds_path
         self._val_ds_path: str = val_ds_path
-        self._file_record_struct: FileRecordStruct = file_record_struct
+        self._file_record_struct: FileRecordStructBuilder = file_record_struct
         self._batch_size: int = batch_size
 
     def get_train_path(self):

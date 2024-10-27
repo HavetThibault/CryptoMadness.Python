@@ -1,4 +1,4 @@
-from training_epoch_stats import TrainingEpochStats
+from ml_sdk.training.training_epoch_stats import TrainingEpochStats
 
 WEIGHTS_FILE_EXTENSION = '.weights.h5'
 EXPORT_MODEL_EXT = '.h5'

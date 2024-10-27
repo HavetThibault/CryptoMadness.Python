@@ -1,8 +1,9 @@
 from typing import Optional
 
 import pandas as pd
-from model.optimization.regression.reg_calculator import RegCalculator
-from model.optimization.regression.reg_results_interpret import RegResultsInterpret
+
+from ml_sdk.optimization.regression.reg_calculator import RegCalculator
+from ml_sdk.optimization.regression.reg_results_interpret import RegResultsInterpret
 
 CONST_COL = 'const'
 

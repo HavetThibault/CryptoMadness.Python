@@ -1,6 +1,6 @@
 import re
 
-from layer_name_giver import LayerNameGiver
+from ml_sdk.model.layers.layer_name_giver import LayerNameGiver
 
 
 class EndRmNameGiver(LayerNameGiver):

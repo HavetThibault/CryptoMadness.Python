@@ -1,6 +1,6 @@
 from typing import Optional
 
-from error_calculator import ErrorCalculator
+from ml_sdk.training.error_calculator import ErrorCalculator
 
 
 class ValLossErrorCalculator(ErrorCalculator):

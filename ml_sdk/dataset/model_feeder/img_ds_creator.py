@@ -38,7 +38,6 @@ class ImgDsCreator(DsCreator):
         self._get_origin_img_name = get_origin_img_name
         self._additional_inputs = additional_inputs
         self._get_img_names = get_img_names
-        self._ds_headers = self.static_get_ds_headers(train_csv_path)
 
     def get_additional_inputs(self):
         return self._additional_inputs
@@ -73,14 +72,6 @@ class ImgDsCreator(DsCreator):
             input_cols = []
         output_cols = headers[output_offset:]
         return img_col, input_cols, output_cols
-
-    @staticmethod
-    def static_get_ds_headers(path) -> list[str]:
-        ds = pd.read_csv(path)
-        return list(ds.columns)
-
-    def get_ds_headers(self) -> list[str]:
-        return self._ds_headers
 
     def get_sorted_ds_headers(self) -> tuple[str, list[str], list[str]]:
         return self.static_get_sorted_ds_headers(self._ds_headers, self._additional_inputs)

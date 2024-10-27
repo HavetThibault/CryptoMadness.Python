@@ -1,18 +1,27 @@
-from typing import Any
+from typing import Any, Optional
 
 from keras.layers import Dense
 
-from layer_output import LayerOutput
-from output_layer_builder import OutputLayerBuilder
+from ml_sdk.model.layers.output.layer_output import LayerOutput
+from ml_sdk.model.layers.output.output_layer_builder import OutputLayerBuilder
 
 
-def create_cnn_ending(input, output_builder: OutputLayerBuilder, dense_neurons: list[int] = None) -> dict[str, Any]:
-    if dense_neurons is not None:
-        dense_layers_output = Dense(units=dense_neurons[0], activation='relu')(input)
-        if len(dense_neurons) > 1:
-            for dense_neuron in dense_neurons[1:]:
-                dense_layers_output = Dense(units=dense_neuron, activation='relu')(dense_layers_output)
-    else:
+def create_relu_layers(input, output_builder: OutputLayerBuilder, neurons: list[int]) -> dict[str, Any]:
+    neurons_activation = [(neuron, 'relu') for neuron in neurons]
+    return create_layers(input, output_builder, neurons_activation)
+
+
+def create_sigmoid_layers(input, output_builder: OutputLayerBuilder, neurons: list[int]) -> dict[str, Any]:
+    neurons_activation = [(neuron, 'sigmoid') for neuron in neurons]
+    return create_layers(input, output_builder, neurons_activation)
+
+
+def create_layers(input, output_builder: OutputLayerBuilder,
+                  neurons_activation: list[tuple[int, Any]]):
+    dense_layers_output = None
+    for neurons, activation in neurons_activation:
+        dense_layers_output = Dense(units=neurons, activation=activation)(input)
+    if dense_layers_output is None:
         dense_layers_output = input
     return output_layers_to_dict(output_builder.create_output_layer(dense_layers_output))
 

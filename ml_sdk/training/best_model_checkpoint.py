@@ -3,9 +3,9 @@ import os
 
 import tensorflow as tf
 
-from error_calculator import ErrorCalculator
-from model_filename_mgmt import get_model_filename
-from training_epoch_stats import TrainingEpochStats
+from ml_sdk.training.error_calculator import ErrorCalculator
+from ml_sdk.training.model_filename_mgmt import get_model_filename
+from ml_sdk.training.training_epoch_stats import TrainingEpochStats
 
 
 class BestModelCheckpoint(tf.keras.callbacks.Callback):

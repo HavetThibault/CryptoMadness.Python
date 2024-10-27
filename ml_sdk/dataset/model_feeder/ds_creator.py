@@ -1,16 +1,19 @@
 import pandas as pd
 import tensorflow as tf
 
+from ml_sdk.dataset.file.file_record_struct_builder import FileRecordStructBuilder
+
 
 class DsCreator:
-    def __init__(self, train_csv_path: str, val_csv_path: str, file_record_struct, repeat_ds: int, batch_size: int,
-                 use_cache):
+    def __init__(self, train_csv_path: str, val_csv_path: str, file_record_struct: FileRecordStructBuilder,
+                 repeat_ds: int, batch_size: int, use_cache):
         self._train_csv_path = train_csv_path
         self._val_csv_path = val_csv_path
-        self._file_record_struct = file_record_struct
+        self._file_record_struct = file_record_struct.get_struct()
         self._repeat_ds = repeat_ds
         self._use_cache = use_cache
         self._batch_size = batch_size
+        self._ds_headers = self.static_get_ds_headers(train_csv_path)
 
     def _parse_label_file(self, line_record) -> tuple:
         raise NotImplementedError()
@@ -64,6 +67,14 @@ class DsCreator:
 
     def get_pandas_val_df(self):
         return self._get_pandas_df(self._val_csv_path)
+
+    def get_ds_headers(self) -> list[str]:
+        return self._ds_headers
+
+    @staticmethod
+    def static_get_ds_headers(path) -> list[str]:
+        ds = pd.read_csv(path)
+        return list(ds.columns)
 
     @staticmethod
     def _get_pandas_df(path):
