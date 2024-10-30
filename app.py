@@ -1,7 +1,15 @@
+from asyncio import sleep
+
+import numpy as np
 import pandas as pd
 
+from helper_sdk.work_progress_state import WorkProgressState, default_progress_display
+from ml_sdk.analyse.analyze import analyze
+from ml_sdk.analyse.class_model_labels_and_preds_instantiator import ClassModelLabelsAndPredsInstantiator
+from ml_sdk.analyse.reg_model_labels_and_preds_instantiator import RegModelLabelsAndPredsInstantiator
 from ml_sdk.dataset.file.file_record_field_type import RecordFieldType
 from ml_sdk.dataset.file.file_record_struct_builder import FileRecordStructBuilder
+from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 from ml_sdk.dataset.model_feeder.mlp_ds_creator_builder import MLPDsCreatorBuilder
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
 from ml_sdk.model.layers.end_rm_name_giver import EndRmNameGiver
@@ -13,11 +21,12 @@ from ml_sdk.training.trainings_runner import run_trainings
 from ml_sdk.training.val_loss_error_calculator import ValLossErrorCalculator
 
 if __name__ == '__main__':
-    train_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_train.csv'
-    val_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_val.csv'
-    dest_dir = 'C:/Users/Thibault/Downloads/BTC/Models/'
-    weights_dir = 'C:/Users/Thibault/Downloads/BTC/Models/Temp/'
-    archived_dir = 'C:/Users/Thibault/Downloads/BTC/Models/Archived/'
+    root = 'E:/BTC/'
+    train_path = root + 'data/btc_train.csv'
+    val_path = root + 'data/btc_val.csv'
+    dest_dir = root + 'Models/'
+    weights_dir = root + 'Models/Temp/'
+    archived_dir = root + 'Models/Archived/'
     model_name = 'mlp_v1'
     output_name = 'outputs'
 
@@ -51,7 +60,7 @@ if __name__ == '__main__':
 
     output_layers_builder = CategoryOutputLayerBuilder(output_name, layer_output_name, outputs)
 
-    params_sets = [[50]]
+    params_sets = [[20 + i * 15] for i in range(7)]
     model_creator = MLPModelCreator(
         model_name,
         batch_size,
@@ -63,9 +72,11 @@ if __name__ == '__main__':
 
     callbacks = [
         get_plateau_sheduler(min_delta, lr_patience, lr_factor),
-        get_early_stopping(min_delta, stop_patience, verbose=1)
+        get_early_stopping(min_delta, stop_patience)
     ]
 
+    progress = WorkProgressState(len(params_sets) * repeat, 1)
+    progress.add_listener(default_progress_display)
     run_trainings(
         params_sets,
         model_creator,
@@ -79,3 +90,6 @@ if __name__ == '__main__':
         verbose=1,
         on_cpu=True
     )
+
+    preds_instatiator = RegModelLabelsAndPredsInstantiator()
+    analyze(model_creator, preds_instatiator, dest_dir, progress)

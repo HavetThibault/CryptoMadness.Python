@@ -3,7 +3,7 @@ import datetime
 from helper_sdk.datetime_helper import format_datetime_round_s, format_delta_round_s
 
 
-def default_training_display(done, total, left_time):
+def default_progress_display(done, total, left_time):
       print(f'{done}/{total}\n'
             f'{format_datetime_round_s(datetime.datetime.now())}\n'
             f'Left time: {format_delta_round_s(left_time)}\n')

@@ -11,17 +11,17 @@ from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 
 
 # 'ds' batch size must be 1 !
-def calculate_labels_and_predictions(model: keras.Model, ds, ds_len: int, progress: WorkProgressState = None) \
+def calculate_labels_and_predictions(model: keras.Model, ds, batch_size: int, ds_len: int, progress: WorkProgressState = None) \
         -> pd.DataFrame:
     if progress is not None:
         progress.start_resume()
     ds_iter = iter(ds)
     df_rows = []
     output_names = []
-    for i in range(ds_len):
+    for i in range(int(ds_len / batch_size) + 1):
         ds_batch = next(ds_iter)
-        img_names: dict[str, Any] = ds_batch[0]
-        predictions: dict[str, np.ndarray] = model.predict(img_names, verbose=False)
+        input_batch: dict[str, Any] = ds_batch[0]
+        predictions: dict[str, np.ndarray] = model.predict(input_batch, verbose=False)
         labels: dict[str, Any] = ds_batch[1]
         df_row = []
         if i == 0:
@@ -31,18 +31,34 @@ def calculate_labels_and_predictions(model: keras.Model, ds, ds_len: int, progre
                                 f'Must match the dataset headers:\n'
                                 f'{list(labels.keys())}')
             output_names = list(predictions.keys())
-        for output_name in output_names:
-            label = labels[output_name].numpy()[0]
-            prediction = predictions[output_name][0][0]
-            df_row.append(label)
-            df_row.append(prediction)
-        df_rows.append(df_row)
-        if progress is not None:
-            progress.increment_done()
+        if not i == int(ds_len / batch_size):
+            to_do_rows = batch_size
+        else:
+            to_do_rows = ds_len % batch_size
+        for k in range(to_do_rows):
+            for output_name in output_names:
+                label: np.ndarray = labels[output_name].numpy()[k]
+                prediction = predictions[output_name][k]
+                if label.shape[0] > 1:
+                    for z, i_label in enumerate(label):
+                        df_row.append(i_label)
+                        df_row.append(prediction[z])
+                else:
+                    df_row.append(label[0])
+                    df_row.append(prediction[0])
+            df_rows.append(df_row)
+            if progress is not None:
+                progress.increment_done()
     df_cols = []
     for output_name in output_names:
-        df_cols.append(output_name)
-        df_cols.append(output_name + ' prediction')
+        label: np.ndarray = labels[output_name].numpy()[0]
+        if label.shape[0] > 1:
+            for i in range(len(label)):
+                df_cols.append(output_name + f'_{i}')
+                df_cols.append(output_name + f'_{i} prediction')
+        else:
+            df_cols.append(output_name)
+            df_cols.append(output_name + ' prediction')
     return pd.DataFrame(df_rows, columns=df_cols)
 
 
@@ -56,11 +72,11 @@ def calculate_classification_labels_and_predictions(model, ds, ds_len, batch_siz
     labels_and_predictions = []
     for i in range(int(ds_len / batch_size) + 1):
         ds_batch = next(ds_iter)
-        img_names = ds_batch[0]
+        input_batch = ds_batch[0]
         labels = ds_batch[1]
         # The model.predict returns one list per category estimation. Each of these lists is a list of <batch_size> list
         # It is the same for the variable 'labels'
-        prediction_batch = model.predict(img_names, verbose=False)
+        prediction_batch = model.predict(input_batch, verbose=False)
         for k in range(batch_size):
             output_row = []
             for p in range(len(prediction_batch)):

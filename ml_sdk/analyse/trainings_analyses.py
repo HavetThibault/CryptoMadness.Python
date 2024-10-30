@@ -43,7 +43,7 @@ def calculate_models_val_labels_and_preds(training_memories_model_creator: list[
                 weights_file = training_mem.get_model_filename(model_creator.get_model_name(), i, k, True)
                 model = model_creator.load_model_from_weights(
                     params_set, training_mem_dir + 'archived/' + weights_file)
-                val_ds, val_len = model_creator.get_ds_creator_builder().get_ds_creator(1).get_val_ds(batch_one=True)
+                val_ds, val_len = model_creator.get_ds_creator_builder().get_ds_creator(1).get_val_ds()
                 models_labels_and_preds.append(
                     model_labels_and_preds_inst.instantiate(
                         model,
