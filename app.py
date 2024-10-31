@@ -21,13 +21,13 @@ from ml_sdk.training.trainings_runner import run_trainings
 from ml_sdk.training.val_loss_error_calculator import ValLossErrorCalculator
 
 if __name__ == '__main__':
-    root = 'E:/BTC/'
-    train_path = root + 'data/btc_train.csv'
-    val_path = root + 'data/btc_val.csv'
-    dest_dir = root + 'Models/'
-    weights_dir = root + 'Models/Temp/'
-    archived_dir = root + 'Models/Archived/'
-    model_name = 'mlp_v1'
+    root = 'C:/Users/Maison/Documents/Thibault/BTC/'
+    train_path = root + 'data/btc_60_5_train.csv'
+    val_path = root + 'data/btc_60_5_val.csv'
+    dest_dir = root + 'Models_60_5/'
+    weights_dir = dest_dir + 'Temp/'
+    archived_dir = dest_dir + 'Archived/'
+    model_name = 'mlp_v2'
     output_name = 'outputs'
 
     inputs = 60 * 2
@@ -35,11 +35,11 @@ if __name__ == '__main__':
     iterations = 500
     batch_size = 512
     min_delta = 0.0005
-    lr_patience = 5
-    lr_factor = 0.1
-    stop_patience = 15
+    lr_patience = 2
+    lr_factor = 0.01
+    stop_patience = 5
     init_lr = 0.1
-    repeat = 3
+    repeat = 1
 
     train_file = pd.read_csv(train_path)
     record_struct = []
@@ -60,7 +60,8 @@ if __name__ == '__main__':
 
     output_layers_builder = CategoryOutputLayerBuilder(output_name, layer_output_name, outputs)
 
-    params_sets = [[20 + i * 15] for i in range(7)]
+    # params_sets = [[20 + i * 15] for i in range(7)]
+    params_sets = [[20 + i * 15, 10 + i * 15] for i in range(7)]
     model_creator = MLPModelCreator(
         model_name,
         batch_size,

@@ -13,3 +13,6 @@ class SpecificClassMetrics:
     def add_wrong(self, interval):
         self._success_rate.add_wrong()
         self._intervals_success[interval].add_wrong()
+
+    def get_rates(self) -> list[float]:
+        return [success_rate.get_rate() for success_rate in self._intervals_success]

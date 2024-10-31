@@ -23,7 +23,6 @@ def calculate_labels_and_predictions(model: keras.Model, ds, batch_size: int, ds
         input_batch: dict[str, Any] = ds_batch[0]
         predictions: dict[str, np.ndarray] = model.predict(input_batch, verbose=False)
         labels: dict[str, Any] = ds_batch[1]
-        df_row = []
         if i == 0:
             if not str_list_equals(list(predictions.keys()), list(labels.keys())):
                 raise Exception('The predictions of the models :\n'
@@ -36,6 +35,7 @@ def calculate_labels_and_predictions(model: keras.Model, ds, batch_size: int, ds
         else:
             to_do_rows = ds_len % batch_size
         for k in range(to_do_rows):
+            df_row = []
             for output_name in output_names:
                 label: np.ndarray = labels[output_name].numpy()[k]
                 prediction = predictions[output_name][k]

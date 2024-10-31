@@ -2,7 +2,7 @@ from keras import Model, Input
 from keras.optimizers import Adam
 
 from ml_sdk.model.creator.model_creator import ModelCreator
-from ml_sdk.model.layers.output.create_ending import create_sigmoid_layers
+from ml_sdk.model.layers.output.create_ending import create_sigmoid_layers, create_relu_layers
 
 
 class MLPModelCreator(ModelCreator):
@@ -16,7 +16,7 @@ class MLPModelCreator(ModelCreator):
         hidden_layers: list[int] = params_set
 
         input_layer = Input(shape=(self._inputs, ), name=self._layer_name_giver.matching_input_name('inputs'))
-        end_layers_output = create_sigmoid_layers(input_layer, self._output_builder, hidden_layers)
+        end_layers_output = create_relu_layers(input_layer, self._output_builder, hidden_layers)
 
         input_layers = {'inputs': input_layer}
         model = Model(inputs=input_layers, outputs=end_layers_output)

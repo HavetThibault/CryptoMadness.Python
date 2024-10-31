@@ -4,9 +4,9 @@ from ml_sdk.dataset.cook.ds_source_file import read_dataset
 from ml_sdk.dataset.file.model_ds_creation import create_save_train_val_ds
 
 if __name__ == '__main__':
-    ds_path = 'D:/MyProg/CSharp/CryptoMadness/CV_BTC_Data.csv'
-    train_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_train.csv'
-    val_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_val.csv'
+    ds_path = 'D:/MyProg/CSharp/CryptoMadness/CV_BTC_Data_60_2.csv'
+    train_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_60_2_train.csv'
+    val_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_60_2_val.csv'
 
     ds = pd.read_csv(ds_path, sep=',', header=0)
     create_save_train_val_ds(

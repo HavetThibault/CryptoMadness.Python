@@ -1,3 +1,6 @@
+import csv
+import math
+
 import pandas as pd
 
 from ml_sdk.analyse.classification.specific_class_metrics import SpecificClassMetrics
@@ -23,7 +26,31 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
         rows_iter = iter(df)
         for row in rows_iter:
             for output_class in self._classes:
-                classes = [row[specific_class] for specific_class in output_class.get_classes()]
+                max_class = None
+                max_class_value = None
+                for specific_class in output_class.get_classes():
+                    specific_class_value = row[specific_class]
+                    if max_class_value is None or specific_class_value > max_class_value:
+                        max_class_value = specific_class_value
+                        max_class = specific_class
+                # According to 'calculate_labels_and_predictions' in predictions_metrics
+                if math.isclose(1, row[max_class + ' prediction'], rel_tol=0.0001):
+                    sub_classes_metrics[max_class].add_right(self._get_interval_index(max_class_value))
+                    classes_metrics[output_class.get_main()].add_right()
+                else:
+                    sub_classes_metrics[max_class].add_wrong(self._get_interval_index(max_class_value))
+                    classes_metrics[output_class.get_main()].add_wrong()
+
+        with open(self._filepath, 'w', newline='\n') as csvfile:
+            csv_writer = csv.writer(csvfile, delimiter=',',
+                                    quotechar='.', quoting=csv.QUOTE_MINIMAL)
+            for output_class in self._classes:
+                for specific_class in output_class.get_classes():
+                    csv_writer.writerow(sub_classes_metrics[specific_class].get_rates())
+
+            csv_writer.writerow([''])
+            for output_class in self._classes:
+                csv_writer.writerow([classes_metrics[output_class.get_main()].get_rate()])
 
     def _get_interval_index(self, value: float) -> int:
         for (i, (interval_min, interval_max)) in enumerate(self._intervals):
