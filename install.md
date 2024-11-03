@@ -31,10 +31,6 @@ py -3.10 -m pip install "pandas<1.6"
 py -3.10 -m pip install "cloudpickle<3.1"
 py -3.10 -m pip install "opencv-python<4.10" 
 py -3.10 -m pip install "statsmodels<0.15"
-py -3.10 -m pip install "ipykernel==6.3.1"
-py -3.10 -m pip install "openpyxl<3.2"
-py -3.10 -m pip install "tk<8.7"
-py -3.10 -m pip install "tf2onnx==1.16.1"
 py -3.10 -m pip install "scipy<1.14"
 ```
 3) Installer les dépendances nécessaires pour faire tourner les notebooks Jupyterlab sur Python 3.11
@@ -67,10 +63,6 @@ python -m pip install "pandas<1.6"
 python -m pip install "cloudpickle<3.1"
 python -m pip install "opencv-python<4.10" 
 python -m pip install "statsmodels<0.15"
-python -m pip install "ipykernel==6.3.1"
-python -m pip install "openpyxl<3.2"
-python -m pip install "tk<8.7"
-python -m pip install "tf2onnx==1.16.1"
 python -m pip install "scipy<1.14"
 ```
 - Runtime 2 (python 3.10 ou 3.11, qu'importe)

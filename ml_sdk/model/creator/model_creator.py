@@ -5,6 +5,7 @@ from keras import Model
 from keras.callbacks import History
 from keras.optimizers import Adam
 
+from helper_sdk.exception_helper import format_exception_to_str
 from ml_sdk.dataset.model_feeder.ds_creator_builder import DsCreatorBuilder
 from ml_sdk.model.layers.layer_name_giver import LayerNameGiver
 from ml_sdk.model.layers.output.output_layer_builder import OutputLayerBuilder
@@ -82,8 +83,7 @@ class ModelCreator:
                         validation_steps=val_batch_per_epoch,
                         verbose=verbose)
         except Exception as e:
-            print(f'Got unexpected exception of type : {type(e)}\n'
-                  f'Details:\n{str(e)}')
+            print(format_exception_to_str(e))
 
     def load_model_from_weights(self, params_set: list, weights_file: str, optimizer=None, loss=None) -> Model:
         try:

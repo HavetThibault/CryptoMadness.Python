@@ -37,17 +37,19 @@ def analyze(model_creator: ModelCreator, labels_and_preds_instatiator: ModelLabe
     pred_dir = files_dir + PREDICTIONS
     if not os.path.exists(pred_dir):
         os.mkdir(pred_dir)
-    for model_val_labels_and_preds in models_val_labels_and_preds:
-        predictions_filename = TrainingMemory.get_model_filename(
-            model_val_labels_and_preds.get_model_name(),
-            model_val_labels_and_preds.get_training_mem_index(),
-            model_val_labels_and_preds.get_training_mem_sub_index(),
-            False)
-        predictions_filename = rm_file_ext(predictions_filename) + '.csv'
-        write_dataset(
-            model_val_labels_and_preds.get_labels_and_preds(),
-            pred_dir + predictions_filename,
-            header=True)
+        for model_val_labels_and_preds in models_val_labels_and_preds:
+            predictions_filename = TrainingMemory.get_model_filename(
+                model_val_labels_and_preds.get_model_name(),
+                model_val_labels_and_preds.get_training_mem_index(),
+                model_val_labels_and_preds.get_training_mem_sub_index(),
+                False)
+            predictions_filename = rm_file_ext(predictions_filename) + '.csv'
+            write_dataset(
+                model_val_labels_and_preds.get_labels_and_preds(),
+                pred_dir + predictions_filename,
+                header=True)
+    else:
+        print('Already found a directory with the predictions')
 
 
 def apply_labels_and_preds(model_creator: ModelCreator, files_dir: str, progress: WorkProgressState,

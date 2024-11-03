@@ -29,7 +29,6 @@ def classification_mlp_process(
         model_name,
         batch_size,
         outputs,
-        output_name,
         params_sets,
         repeat,
         total_inputs,
@@ -54,9 +53,9 @@ def classification_mlp_process(
         outputs)
 
     layer_name_giver = EndRmNameGiver('', '')
-    layer_output_name = layer_name_giver.matching_output_name(output_name)
+    layer_output_name = layer_name_giver.matching_output_name(MLPModelCreator.OUTPUT_NAME)
 
-    output_layers_builder = CategoryOutputLayerBuilder(output_name, layer_output_name, outputs)
+    output_layers_builder = CategoryOutputLayerBuilder(MLPModelCreator.OUTPUT_NAME, layer_output_name, outputs)
 
     model_creator = MLPModelCreator(
         model_name,
@@ -85,9 +84,9 @@ def classification_mlp_process(
         archived_dir,
         error_calculator,
         repeat,
+        loss='categorical_crossentropy',
         additional_callbacks=callbacks,
-        verbose=1,
-        on_cpu=True
+        verbose=1
     )
 
     preds_instatiator = RegModelLabelsAndPredsInstantiator()
@@ -101,7 +100,6 @@ def regression_mlp_process(
         model_name,
         batch_size,
         outputs,
-        output_name,
         params_sets,
         repeat,
         total_inputs,
@@ -126,9 +124,9 @@ def regression_mlp_process(
         outputs)
 
     layer_name_giver = EndRmNameGiver('', '')
-    layer_output_name = layer_name_giver.matching_output_name(output_name)
+    layer_output_name = layer_name_giver.matching_output_name(MLPModelCreator.OUTPUT_NAME)
 
-    output_layers_builder = FloatOutputLayerBuilder(output_name, layer_output_name)
+    output_layers_builder = FloatOutputLayerBuilder(MLPModelCreator.OUTPUT_NAME, layer_output_name)
 
     model_creator = MLPModelCreator(
         model_name,
@@ -157,9 +155,9 @@ def regression_mlp_process(
         archived_dir,
         error_calculator,
         repeat,
+        loss='mean_squared_error',
         additional_callbacks=callbacks,
-        verbose=1,
-        on_cpu=True
+        verbose=1
     )
 
     preds_instatiator = RegModelLabelsAndPredsInstantiator()
