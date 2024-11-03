@@ -1,14 +1,54 @@
 import pandas as pd
 
-from ml_sdk.dataset.cook.ds_source_file import read_dataset
+from ml_sdk.dataset.cook.ds_source_file import shuffle_dataset
 from ml_sdk.dataset.file.model_ds_creation import create_save_train_val_ds
 
 if __name__ == '__main__':
-    ds_path = 'D:/MyProg/CSharp/CryptoMadness/CV_BTC_Data_60_2.csv'
-    train_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_60_2_train.csv'
-    val_path = 'C:/Users/Thibault/Downloads/BTC/data/btc_60_2_val.csv'
+    inputs = 240
+    after = 2
+    version = 1
+    intervals = 1
+    normalized = 1
+    str_id = f'b{inputs}_a{after}_i{intervals}_v{version}'
+
+    ds_path = f'D:/MyProg/CSharp/CryptoMadness/Data/CV_BTC_Data_{str_id}.csv'
+    train_path = f'D:/MyProg/CSharp/CryptoMadness/Data/TrainVal/btc_{str_id}_n{normalized}_train.csv'
+    val_path = f'D:/MyProg/CSharp/CryptoMadness/Data/TrainVal/btc_{str_id}_n{normalized}_val.csv'
 
     ds = pd.read_csv(ds_path, sep=',', header=0)
+    ds = shuffle_dataset(ds)
+
+    if normalized == 1:
+        cols: list[str] = list(ds.columns)
+        vol_max = None
+        vol_min = None
+        close_max = None
+        close_min = None
+        vol_cols = []
+        close_cols = []
+        for col in cols:
+            if col.startswith('Volume'):
+                vol_cols.append(col)
+                col_max = max(ds[col])
+                if vol_max is None or col_max > vol_max:
+                    vol_max = col_max
+                col_min = min(ds[col])
+                if vol_min is None or col_min < vol_min:
+                    vol_min = col_min
+            elif col.startswith('Close') and not col.endswith('prediction'):
+                close_cols.append(col)
+                col_max = max(ds[col])
+                if close_max is None or col_max > close_max:
+                    close_max = col_max
+                col_min = min(ds[col])
+                if close_min is None or col_min < close_min:
+                    close_min = col_min
+            print(f'Done with column "{col}"')
+        print(f'Volume range: [{vol_min}, {vol_max}]')
+        print(f'Close range: [{close_min}, {close_max}]')
+        ds[vol_cols] = ds[vol_cols].apply(lambda a: (a - vol_min) / (vol_max - vol_min), axis="columns")
+        ds[close_cols] = ds[close_cols].apply(lambda a: (a - close_min) / (close_max - close_min), axis="columns")
+
     create_save_train_val_ds(
         ds,
         0.3,
