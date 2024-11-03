@@ -4,10 +4,10 @@ from ml_sdk.dataset.cook.ds_source_file import shuffle_dataset
 from ml_sdk.dataset.file.model_ds_creation import create_save_train_val_ds
 
 if __name__ == '__main__':
-    inputs = 240
+    inputs = 60
     after = 2
     version = 1
-    intervals = 1
+    intervals = 0
     normalized = 1
     str_id = f'b{inputs}_a{after}_i{intervals}_v{version}'
 

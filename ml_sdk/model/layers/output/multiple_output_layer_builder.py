@@ -1,5 +1,5 @@
 from ml_sdk.model.layers.output.layer_output import LayerOutput
-from output_layer_builder import OutputLayerBuilder
+from ml_sdk.model.layers.output.output_layer_builder import OutputLayerBuilder
 
 
 class MultipleOutputLayerBuilder(OutputLayerBuilder):

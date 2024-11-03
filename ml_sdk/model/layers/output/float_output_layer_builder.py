@@ -1,7 +1,7 @@
 from keras.layers import Dense
 
-from layer_output import LayerOutput
-from output_layer_builder import OutputLayerBuilder
+from ml_sdk.model.layers.output.layer_output import LayerOutput
+from ml_sdk.model.layers.output.output_layer_builder import OutputLayerBuilder
 
 
 class FloatOutputLayerBuilder(OutputLayerBuilder):
