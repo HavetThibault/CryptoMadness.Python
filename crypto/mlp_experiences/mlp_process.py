@@ -93,6 +93,41 @@ def classification_mlp_process(
     analyze(model_creator, preds_instatiator, dest_dir, progress)
 
 
+def get_mlp_regression_model_creator(
+        train_path,
+        val_path,
+        total_inputs,
+        model_name,
+        batch_size,
+        outputs,
+        init_lr):
+    train_file = pd.read_csv(train_path)
+    record_struct = []
+    for i in range(len(train_file.columns)):
+        record_struct.append(RecordFieldType(RecordFieldType.FLOAT))
+
+    layer_name_giver = EndRmNameGiver('', '')
+    layer_output_name = layer_name_giver.matching_output_name(MLPModelCreator.OUTPUT_NAME)
+
+    ds_creator_builder = MLPDsCreatorBuilder(
+        train_path,
+        val_path,
+        FileRecordStructBuilder(record_struct),
+        batch_size,
+        outputs)
+
+    output_layers_builder = FloatOutputLayerBuilder(MLPModelCreator.OUTPUT_NAME, layer_output_name)
+
+    return MLPModelCreator(
+        model_name,
+        batch_size,
+        output_layers_builder,
+        ds_creator_builder,
+        layer_name_giver,
+        total_inputs,
+        init_lr)
+
+
 def regression_mlp_process(
         train_path,
         val_path,
@@ -109,33 +144,17 @@ def regression_mlp_process(
         lr_factor,
         stop_patience,
         iterations):
-    train_file = pd.read_csv(train_path)
-    record_struct = []
-    for i in range(len(train_file.columns)):
-        record_struct.append(RecordFieldType(RecordFieldType.FLOAT))
-
     memory_filepath = dest_dir + model_name + TrainingMemory.FILE_EXT
     error_calculator = ValLossErrorCalculator()
-    ds_creator_builder = MLPDsCreatorBuilder(
+    model_creator = get_mlp_regression_model_creator(
         train_path,
         val_path,
-        FileRecordStructBuilder(record_struct),
-        batch_size,
-        outputs)
-
-    layer_name_giver = EndRmNameGiver('', '')
-    layer_output_name = layer_name_giver.matching_output_name(MLPModelCreator.OUTPUT_NAME)
-
-    output_layers_builder = FloatOutputLayerBuilder(MLPModelCreator.OUTPUT_NAME, layer_output_name)
-
-    model_creator = MLPModelCreator(
+        total_inputs,
         model_name,
         batch_size,
-        output_layers_builder,
-        ds_creator_builder,
-        layer_name_giver,
-        total_inputs,
-        init_lr)
+        outputs,
+        init_lr
+    )
 
     callbacks = [
         get_plateau_sheduler(min_delta, lr_patience, lr_factor),

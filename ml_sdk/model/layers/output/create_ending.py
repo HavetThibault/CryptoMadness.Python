@@ -18,11 +18,9 @@ def create_sigmoid_layers(input, output_builder: OutputLayerBuilder, neurons: li
 
 def create_layers(input, output_builder: OutputLayerBuilder,
                   neurons_activation: list[tuple[int, Any]]):
-    dense_layers_output = None
+    dense_layers_output = input
     for neurons, activation in neurons_activation:
-        dense_layers_output = Dense(units=neurons, activation=activation)(input)
-    if dense_layers_output is None:
-        dense_layers_output = input
+        dense_layers_output = Dense(units=neurons, activation=activation)(dense_layers_output)
     return output_layers_to_dict(output_builder.create_output_layer(dense_layers_output))
 
 

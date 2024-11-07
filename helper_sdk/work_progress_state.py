@@ -10,7 +10,7 @@ def default_progress_display(done, total, left_time):
 
 
 class WorkProgressState:
-    def __init__(self, total, estimation_step = 1):
+    def __init__(self, total = None, estimation_step = 1):
         self._estimation_step = estimation_step
 
         self._done = 0

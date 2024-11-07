@@ -1,4 +1,4 @@
-from ml_sdk.analyse.classification.success_rate import SuccessRate
+from ml_sdk.analyse.success_rate import SuccessRate
 
 
 class SpecificClassMetrics:

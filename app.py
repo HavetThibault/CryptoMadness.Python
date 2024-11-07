@@ -1,7 +1,4 @@
-import os
-
-from experiences.regression1 import regression1_mlp
-from mlp_process import classification_mlp_process, regression_mlp_process
+from crypto.mlp_experiences.regressions import regression2_mlp_metrics
 
 if __name__ == '__main__':
-    regression1_mlp()
+    regression2_mlp_metrics()

@@ -4,7 +4,7 @@ import math
 import pandas as pd
 
 from ml_sdk.analyse.classification.specific_class_metrics import SpecificClassMetrics
-from ml_sdk.analyse.classification.success_rate import SuccessRate
+from ml_sdk.analyse.success_rate import SuccessRate
 from ml_sdk.analyse.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
 from ml_sdk.analyse.classification.output_classes import OutputClasses
 
@@ -15,7 +15,7 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
         self._intervals = intervals
         self._classes: list[OutputClasses] = classes
 
-    def process(self, df: pd.DataFrame):
+    def process(self, filename, df: pd.DataFrame):
         sub_classes_metrics = dict[str, SpecificClassMetrics]()
         classes_metrics = dict[str, SuccessRate]()
         for output_class in self._classes:
@@ -42,8 +42,7 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
                     classes_metrics[output_class.get_main()].add_wrong()
 
         with open(self._filepath, 'w', newline='\n') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=',',
-                                    quotechar='.', quoting=csv.QUOTE_MINIMAL)
+            csv_writer = csv.writer(csvfile, delimiter=',', quotechar='.', quoting=csv.QUOTE_MINIMAL)
             for output_class in self._classes:
                 for specific_class in output_class.get_classes():
                     csv_writer.writerow(sub_classes_metrics[specific_class].get_rates())

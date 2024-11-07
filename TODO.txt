@@ -1,0 +1,1 @@
+- Put all AI metrics in the same file with a col named param set and columns for accuracies

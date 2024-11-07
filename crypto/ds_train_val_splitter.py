@@ -1,5 +1,6 @@
 import pandas as pd
 
+from helper_sdk.pandas_helper import df_min_max
 from ml_sdk.dataset.cook.ds_source_file import shuffle_dataset
 from ml_sdk.dataset.file.model_ds_creation import create_save_train_val_ds
 
@@ -20,30 +21,15 @@ if __name__ == '__main__':
 
     if normalized == 1:
         cols: list[str] = list(ds.columns)
-        vol_max = None
-        vol_min = None
-        close_max = None
-        close_min = None
         vol_cols = []
         close_cols = []
         for col in cols:
             if col.startswith('Volume'):
                 vol_cols.append(col)
-                col_max = max(ds[col])
-                if vol_max is None or col_max > vol_max:
-                    vol_max = col_max
-                col_min = min(ds[col])
-                if vol_min is None or col_min < vol_min:
-                    vol_min = col_min
             elif col.startswith('Close') and not col.endswith('prediction'):
                 close_cols.append(col)
-                col_max = max(ds[col])
-                if close_max is None or col_max > close_max:
-                    close_max = col_max
-                col_min = min(ds[col])
-                if close_min is None or col_min < close_min:
-                    close_min = col_min
-            print(f'Done with column "{col}"')
+        vol_min, vol_max = df_min_max(ds[vol_cols])
+        close_min, close_max = df_min_max(ds[close_cols])
         print(f'Volume range: [{vol_min}, {vol_max}]')
         print(f'Close range: [{close_min}, {close_max}]')
         ds[vol_cols] = ds[vol_cols].apply(lambda a: (a - vol_min) / (vol_max - vol_min), axis="columns")

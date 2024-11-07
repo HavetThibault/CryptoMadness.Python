@@ -10,7 +10,6 @@ from helper_sdk.work_progress_state import WorkProgressState
 from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 
 
-# 'ds' batch size must be 1 !
 def calculate_labels_and_predictions(model: keras.Model, ds, batch_size: int, ds_len: int, progress: WorkProgressState = None) \
         -> pd.DataFrame:
     if progress is not None:

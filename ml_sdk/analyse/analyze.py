@@ -12,7 +12,8 @@ from ml_sdk.model.creator.model_creator import ModelCreator
 from ml_sdk.training.training_memory import TrainingMemory
 
 
-PREDICTIONS = 'predictions/'
+PREDICTIONS_DIR = 'Predictions/'
+METRICS_DIR = 'Metrics/'
 
 
 def analyze(model_creator: ModelCreator, labels_and_preds_instatiator: ModelLabelsAndPredsInstantiator, files_dir: str,
@@ -28,14 +29,14 @@ def analyze(model_creator: ModelCreator, labels_and_preds_instatiator: ModelLabe
         int(val_len * progress_ratio))
     progress.start_resume()
 
-    models_val_labels_and_preds = calculate_models_val_labels_and_preds(
-        [model_creator],
-        files_dir,
-        labels_and_preds_instatiator,
-        progress)
-
-    pred_dir = files_dir + PREDICTIONS
+    pred_dir = files_dir + PREDICTIONS_DIR
     if not os.path.exists(pred_dir):
+        models_val_labels_and_preds = calculate_models_val_labels_and_preds(
+            [model_creator],
+            files_dir,
+            labels_and_preds_instatiator,
+            progress)
+
         os.mkdir(pred_dir)
         for model_val_labels_and_preds in models_val_labels_and_preds:
             predictions_filename = TrainingMemory.get_model_filename(
@@ -59,6 +60,7 @@ def apply_labels_and_preds(model_creator: ModelCreator, files_dir: str, progress
         files_dir + training_mem_name + TrainingMemory.FILE_EXT)
     params_matrix = training_mem.get_params_matrix()
     progress.reset(len(params_matrix) * training_mem.repeat, 1)
+    progress.start_resume()
     for i, params_set in params_matrix.items():
         if training_mem.get_all_training_stats()[i] is None:
             continue
@@ -66,5 +68,5 @@ def apply_labels_and_preds(model_creator: ModelCreator, files_dir: str, progress
             predictions_filename = TrainingMemory.get_model_filename(
                 model_creator.get_model_name(), i, k, False)
             predictions_filename = rm_file_ext(predictions_filename) + '.csv'
-            apply.process(read_dataset(predictions_filename, header=0))
+            apply.process(predictions_filename, read_dataset(files_dir + PREDICTIONS_DIR + predictions_filename, header=0))
             progress.increment_done()
