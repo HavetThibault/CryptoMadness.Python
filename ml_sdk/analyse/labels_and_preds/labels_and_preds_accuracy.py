@@ -3,7 +3,9 @@ import math
 
 import pandas as pd
 
+from helper_sdk.csv_helper import get_csv_writer
 from ml_sdk.analyse.classification.specific_class_metrics import SpecificClassMetrics
+from ml_sdk.analyse.predictions_metrics import PREDICTION_COL_END
 from ml_sdk.analyse.success_rate import SuccessRate
 from ml_sdk.analyse.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
 from ml_sdk.analyse.classification.output_classes import OutputClasses
@@ -34,7 +36,7 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
                         max_class_value = specific_class_value
                         max_class = specific_class
                 # According to 'calculate_labels_and_predictions' in predictions_metrics
-                if math.isclose(1, row[max_class + ' prediction'], rel_tol=0.0001):
+                if math.isclose(1, row[max_class + PREDICTION_COL_END], rel_tol=0.0001):
                     sub_classes_metrics[max_class].add_right(self._get_interval_index(max_class_value))
                     classes_metrics[output_class.get_main()].add_right()
                 else:
@@ -42,7 +44,7 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
                     classes_metrics[output_class.get_main()].add_wrong()
 
         with open(self._filepath, 'w', newline='\n') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=',', quotechar='.', quoting=csv.QUOTE_MINIMAL)
+            csv_writer = get_csv_writer(csvfile)
             for output_class in self._classes:
                 for specific_class in output_class.get_classes():
                     csv_writer.writerow(sub_classes_metrics[specific_class].get_rates())

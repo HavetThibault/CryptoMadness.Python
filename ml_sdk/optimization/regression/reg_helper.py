@@ -1,11 +1,12 @@
 from typing import Optional
 
 import pandas as pd
-from model.optimization.regression.ds_transformer import DSTransformer
-from model.optimization.regression.reg_calculator import RegCalculator
-from model.optimization.regression.reg_distinct_cols_frame_finder import RegDistinctColsFrameFinder
-from model.optimization.regression.reg_frame_finder import CONST_COL
-from model.optimization.regression.reg_results_interpret import RegResultsInterpret
+
+from ml_sdk.optimization.regression.ds_transformer import DSTransformer
+from ml_sdk.optimization.regression.reg_calculator import RegCalculator
+from ml_sdk.optimization.regression.reg_distinct_cols_frame_finder import RegDistinctColsFrameFinder
+from ml_sdk.optimization.regression.reg_frame_finder import CONST_COL
+from ml_sdk.optimization.regression.reg_results_interpret import RegResultsInterpret
 
 
 # First significant model with the biggest number of distinct col

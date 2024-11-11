@@ -1,13 +1,13 @@
 import pandas as pd
 
-from model.optimization.parameter_interval import ParameterInterval
-from model.optimization.regression.ds_transformer import DSTransformer
-from model.optimization.regression.reg_calculator import RegCalculator
-from model.optimization.regression.reg_helper import first_significant_best_frame
-from model.optimization.regression.reg_results_interpret import RegResultsInterpret
-from model.training.error_calculator import ErrorCalculator
-from model.training.training_memory import TrainingMemory
-from model.training.trainings_runner import lowest_error_params_set
+from ml_sdk.optimization.parameter_interval import ParameterInterval
+from ml_sdk.optimization.regression.ds_transformer import DSTransformer
+from ml_sdk.optimization.regression.reg_calculator import RegCalculator
+from ml_sdk.optimization.regression.reg_helper import first_significant_best_frame
+from ml_sdk.optimization.regression.reg_results_interpret import RegResultsInterpret
+from ml_sdk.training.error_calculator import ErrorCalculator
+from ml_sdk.training.training_memory import TrainingMemory
+from ml_sdk.training.trainings_runner import lowest_error_params_set
 
 
 def optimize_and_print(

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from model.optimization.regression.ds_transformer import DSTransformer
-from model.optimization.regression.reg_frame_finder import CONST_COL
+from ml_sdk.optimization.regression.ds_transformer import DSTransformer
+from ml_sdk.optimization.regression.reg_frame_finder import CONST_COL
 
 
 class PolyDSTransformer(DSTransformer):

@@ -3,6 +3,12 @@ class SuccessRate:
         self._right = 0
         self._total = 0
 
+    def get_right(self):
+        return self._right
+
+    def get_total(self):
+        return self._total
+
     def add_right(self):
         self._total += 1
 

@@ -1,5 +1,6 @@
-from model.optimization.regression.reg_calculator import RegCalculator
 from statsmodels.regression.linear_model import OLS
+
+from ml_sdk.optimization.regression.reg_calculator import RegCalculator
 
 
 class OLSRegCalculator(RegCalculator):

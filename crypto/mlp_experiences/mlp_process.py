@@ -3,6 +3,7 @@ from asyncio import sleep
 import numpy as np
 import pandas as pd
 
+from helper_sdk.csv_helper import read_headers
 from helper_sdk.work_progress_state import WorkProgressState, default_progress_display
 from ml_sdk.analyse.analyze import analyze
 from ml_sdk.analyse.class_model_labels_and_preds_instantiator import ClassModelLabelsAndPredsInstantiator
@@ -38,9 +39,9 @@ def classification_mlp_process(
         lr_factor,
         stop_patience,
         iterations):
-    train_file = pd.read_csv(train_path)
+    columns = read_headers(train_path)
     record_struct = []
-    for i in range(len(train_file.columns)):
+    for i in range(len(columns)):
         record_struct.append(RecordFieldType(RecordFieldType.FLOAT))
 
     memory_filepath = dest_dir + model_name + TrainingMemory.FILE_EXT
@@ -101,9 +102,9 @@ def get_mlp_regression_model_creator(
         batch_size,
         outputs,
         init_lr):
-    train_file = pd.read_csv(train_path)
+    columns = read_headers(train_path)
     record_struct = []
-    for i in range(len(train_file.columns)):
+    for i in range(len(columns)):
         record_struct.append(RecordFieldType(RecordFieldType.FLOAT))
 
     layer_name_giver = EndRmNameGiver('', '')

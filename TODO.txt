@@ -1,1 +1,2 @@
-- Put all AI metrics in the same file with a col named param set and columns for accuracies
+- OK: Put all AI metrics in the same file with a col named param set and columns for accuracies
+- Create a model that predict the reliability of the prediction

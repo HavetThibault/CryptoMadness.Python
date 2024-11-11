@@ -2,5 +2,12 @@ import pandas as pd
 
 
 class LabelsAndPredsProcessor:
-    def process(self, filename, df: pd.DataFrame):
+
+    def process_start(self):
+        raise NotImplementedError()
+
+    def process_end(self):
+        raise NotImplementedError()
+
+    def process(self, params_set, filename, df: pd.DataFrame):
         raise NotImplementedError()

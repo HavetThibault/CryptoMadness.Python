@@ -10,6 +10,9 @@ from helper_sdk.work_progress_state import WorkProgressState
 from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 
 
+PREDICTION_COL_END = ' prediction'
+
+
 def calculate_labels_and_predictions(model: keras.Model, ds, batch_size: int, ds_len: int, progress: WorkProgressState = None) \
         -> pd.DataFrame:
     if progress is not None:
@@ -54,10 +57,10 @@ def calculate_labels_and_predictions(model: keras.Model, ds, batch_size: int, ds
         if label.shape[0] > 1:
             for i in range(len(label)):
                 df_cols.append(output_name + f'_{i}')
-                df_cols.append(output_name + f'_{i} prediction')
+                df_cols.append(output_name + f'_{i}{PREDICTION_COL_END}')
         else:
             df_cols.append(output_name)
-            df_cols.append(output_name + ' prediction')
+            df_cols.append(output_name + PREDICTION_COL_END)
     return pd.DataFrame(df_rows, columns=df_cols)
 
 

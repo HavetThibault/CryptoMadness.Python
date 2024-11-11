@@ -61,6 +61,7 @@ def apply_labels_and_preds(model_creator: ModelCreator, files_dir: str, progress
     params_matrix = training_mem.get_params_matrix()
     progress.reset(len(params_matrix) * training_mem.repeat, 1)
     progress.start_resume()
+    apply.process_start()
     for i, params_set in params_matrix.items():
         if training_mem.get_all_training_stats()[i] is None:
             continue
@@ -68,5 +69,6 @@ def apply_labels_and_preds(model_creator: ModelCreator, files_dir: str, progress
             predictions_filename = TrainingMemory.get_model_filename(
                 model_creator.get_model_name(), i, k, False)
             predictions_filename = rm_file_ext(predictions_filename) + '.csv'
-            apply.process(predictions_filename, read_dataset(files_dir + PREDICTIONS_DIR + predictions_filename, header=0))
+            apply.process(params_set, predictions_filename, read_dataset(files_dir + PREDICTIONS_DIR + predictions_filename, header=0))
             progress.increment_done()
+    apply.process_end()

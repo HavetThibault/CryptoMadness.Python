@@ -1,10 +1,11 @@
 from typing import Optional
 
 import pandas as pd
-from helper.list_helper import contains
-from model.optimization.regression.reg_calculator import RegCalculator
-from model.optimization.regression.reg_frame_finder import RegFrameFinder, CONST_COL
-from model.optimization.regression.reg_results_interpret import RegResultsInterpret
+
+from helper_sdk.list_helper import contains
+from ml_sdk.optimization.regression.reg_calculator import RegCalculator
+from ml_sdk.optimization.regression.reg_frame_finder import RegFrameFinder, CONST_COL
+from ml_sdk.optimization.regression.reg_results_interpret import RegResultsInterpret
 
 
 class RegDistinctColsFrameFinder(RegFrameFinder):

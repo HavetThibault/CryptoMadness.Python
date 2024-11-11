@@ -1,6 +1,7 @@
 import pandas as pd
 import tensorflow as tf
 
+from helper_sdk.csv_helper import read_headers
 from ml_sdk.dataset.file.file_record_struct_builder import FileRecordStructBuilder
 
 
@@ -73,8 +74,7 @@ class DsCreator:
 
     @staticmethod
     def static_get_ds_headers(path) -> list[str]:
-        ds = pd.read_csv(path)
-        return list(ds.columns)
+        return read_headers(path)
 
     @staticmethod
     def _get_pandas_df(path):

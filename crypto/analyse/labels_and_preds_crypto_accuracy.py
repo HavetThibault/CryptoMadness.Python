@@ -1,20 +1,40 @@
+from io import TextIOWrapper
+from typing import TextIO
+
 import pandas as pd
 
+from helper_sdk.csv_helper import get_csv_writer
 from helper_sdk.file_helper import rm_file_ext
 from ml_sdk.analyse.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
+from ml_sdk.analyse.predictions_metrics import PREDICTION_COL_END
 from ml_sdk.analyse.success_rate import SuccessRate
 from ml_sdk.dataset.cook.ds_source_file import read_dataset, write_dataset
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
+from ml_sdk.optimization.parameters_matrix_generator import params_set_to_str
+from ml_sdk.training.training_memory import TrainingMemory
 
 
 class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
+    METRIC_FILE = 'metrics.csv'
+
     def __init__(self, val_filepath, dest_folder, min_close, max_close):
         self._val_filepath: str = val_filepath
         self._dest_folder = dest_folder
         self._min_close = min_close
         self._max_close = max_close
+        self._file_desc = None
+        self._writer = None
 
-    def process(self, filename, predictions: pd.DataFrame):
+    def process_start(self):
+        self._file_desc = open(self._dest_folder + self.METRIC_FILE, 'w', newline='\n')
+        self._writer = get_csv_writer(self._file_desc)
+        self._writer.writerow(('params_set', 'increase_success', 'increase_total', 'increase_success_rate',
+                               'decrease_success', 'decrease_total', 'decrease_success_rate'))
+
+    def process_end(self):
+        self._file_desc.close()
+
+    def process(self, params_set, filename, predictions: pd.DataFrame):
         val_df = read_dataset(self._val_filepath, header=0)
         predictions_iter = iter(predictions.iloc)
         val_iter = iter(val_df.iloc)
@@ -23,7 +43,7 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
         last_close_col = self._get_last_close_col(list(val_df.columns))
         for predictions_row in predictions_iter:
             val_row = next(val_iter)
-            prediction = predictions_row[MLPModelCreator.OUTPUT_NAME + ' prediction']
+            prediction = predictions_row[MLPModelCreator.OUTPUT_NAME + PREDICTION_COL_END]
             label = predictions_row[MLPModelCreator.OUTPUT_NAME]
             last_close = val_row[last_close_col] * (self._max_close - self._min_close) + self._min_close
             if label - last_close > 0:
@@ -36,12 +56,14 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
                     decrease_success.add_right()
                 else:
                     decrease_success.add_wrong()
-        write_dataset(
-            pd.DataFrame(
-                [[increase_success.get_rate(), decrease_success.get_rate()]],
-                columns=['Increase success rate', 'Decrease success rate']),
-            self._dest_folder + rm_file_ext(filename) + 'metrics.csv'
-        )
+        self._writer.writerow([
+            params_set_to_str(params_set),
+            increase_success.get_right(),
+            increase_success.get_total(),
+            f'{increase_success.get_rate() * 100: 0.3f}%',
+            decrease_success.get_right(),
+            decrease_success.get_total(),
+            f'{decrease_success.get_rate() * 100: 0.3f}%'])
 
     @staticmethod
     def _get_last_close_col(cols: list[str]) -> str:
@@ -54,5 +76,3 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
                     max_index = index
                     last_close = col
         return last_close
-
-

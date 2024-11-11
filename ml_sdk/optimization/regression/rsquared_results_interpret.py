@@ -1,7 +1,8 @@
 from typing import Optional, Any
 
-from model.optimization.regression.reg_results_interpret import RegResultsInterpret
 from statsmodels.regression.linear_model import RegressionResults
+
+from ml_sdk.optimization.regression.reg_results_interpret import RegResultsInterpret
 
 
 class RSquaredResultsInterpret(RegResultsInterpret):
