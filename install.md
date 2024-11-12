@@ -55,7 +55,7 @@ avec les librairies opencv et tensorflow, alors que l'utilitaire 'pip' les insta
 Une fois chacun des 2 runtimes créée, on installe donc les dépendances sur chacun des environnement:
 - Runtime 1 (python 3.10)
 ```
-conda activate env <nomRuntime1>
+conda activate <nomRuntime1>
 python -m pip install "tensorflow<2.11"
 python -m pip install "matplotlib<3.8"
 python -m pip install "scipy<1.13"

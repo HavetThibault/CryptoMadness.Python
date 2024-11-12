@@ -47,7 +47,7 @@ class ImgDsCreator(DsCreator):
 
     def _get_img_names(self, line_record):
         fields = tf.io.decode_csv(line_record, self._file_record_struct)
-        img_name = str(fields[0])
+        return str(fields[0])
 
     def _load_dataset_img_names(self, ds_path: str, verbose=False) -> list[str]:
         df = self._get_pandas_df(ds_path)

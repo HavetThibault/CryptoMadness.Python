@@ -8,20 +8,7 @@ from ml_sdk.analyse.model_output_error import ModelsOutputsErrors
 from ml_sdk.analyse.predictions_metrics import get_params_intervals
 from ml_sdk.model.creator.model_creator import ModelCreator
 from ml_sdk.plot.model_stats import trainings_errors_boxplot
-from ml_sdk.training.training_memory import TrainingMemory
-
-
-def get_training_errors(creators: list[ModelCreator], training_mem_dir, params_set_cols,
-                        error_calc):
-    for model_creator in creators:
-        training_mem_name = model_creator.get_model_name()
-        training_mem: TrainingMemory = TrainingMemory.load_instance(
-            training_mem_dir + training_mem_name + TrainingMemory.FILE_EXT)
-        if training_mem.get_repeat() == 1:
-            training_df = training_mem.get_params_df(params_set_cols).join(training_mem.get_target_df(error_calc))
-        else:
-            training_df = training_mem.get_all_params_df(params_set_cols).join(training_mem.get_all_target_df(error_calc))
-        return training_df.sort_values(TrainingMemory.DEFAULT_TARGET_COL, axis=0)
+from ml_sdk.training.trainings_memory import TrainingsMemory
 
 
 def calculate_models_val_labels_and_preds(training_memories_model_creator: list[ModelCreator],
@@ -33,13 +20,14 @@ def calculate_models_val_labels_and_preds(training_memories_model_creator: list[
     for model_creator in training_memories_model_creator:
         print(f'Calculating predictions of {model_creator.get_model_name()}...')
         training_mem_name = model_creator.get_model_name()
-        training_mem: TrainingMemory = TrainingMemory.load_instance(
-            training_mem_dir + training_mem_name + TrainingMemory.FILE_EXT)
-        params_matrix = training_mem.get_params_matrix()
-        for i, params_set in params_matrix.items():
-            if training_mem.get_all_training_stats()[i] is None:
+        training_mem: TrainingsMemory = TrainingsMemory.load_instance(
+            training_mem_dir + training_mem_name + TrainingsMemory.FILE_EXT)
+        trainings_results = training_mem.get_trainings_results()
+        for i, training_results in enumerate(trainings_results):
+            if training_results.get_stats() is None:
                 continue
-            for k in range(training_mem.repeat):
+            params_set = training_results.get_params_set()
+            for k in range(training_results.get_stats_count()):
                 weights_file = training_mem.get_model_filename(model_creator.get_model_name(), i, k, True)
                 model = model_creator.load_model_from_weights(
                     params_set, training_mem_dir + 'archived/' + weights_file)

@@ -17,7 +17,13 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
         self._intervals = intervals
         self._classes: list[OutputClasses] = classes
 
-    def process(self, filename, df: pd.DataFrame):
+    def process_start(self):
+        pass
+
+    def process_end(self):
+        pass
+
+    def process(self, params_set, filename, predictions: pd.DataFrame):
         sub_classes_metrics = dict[str, SpecificClassMetrics]()
         classes_metrics = dict[str, SuccessRate]()
         for output_class in self._classes:
@@ -25,7 +31,7 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
             for specific_class in output_class.get_classes():
                 sub_classes_metrics[specific_class] = SpecificClassMetrics(len(self._intervals))
 
-        rows_iter = iter(df)
+        rows_iter = iter(predictions)
         for row in rows_iter:
             for output_class in self._classes:
                 max_class = None

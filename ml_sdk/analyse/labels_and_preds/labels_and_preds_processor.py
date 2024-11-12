@@ -9,5 +9,5 @@ class LabelsAndPredsProcessor:
     def process_end(self):
         raise NotImplementedError()
 
-    def process(self, params_set, filename, df: pd.DataFrame):
+    def process(self, params_set, filename, predictions: pd.DataFrame):
         raise NotImplementedError()

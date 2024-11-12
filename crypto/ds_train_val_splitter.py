@@ -1,3 +1,5 @@
+from configparser import Error
+
 import pandas as pd
 
 from helper_sdk.pandas_helper import df_min_max
@@ -12,9 +14,11 @@ if __name__ == '__main__':
     normalized = 1
     str_id = f'b{inputs}_a{after}_i{intervals}_v{version}'
 
-    ds_path = f'D:/MyProg/CSharp/CryptoMadness/Data/CV_BTC_Data_{str_id}.csv'
-    train_path = f'D:/MyProg/CSharp/CryptoMadness/Data/TrainVal/btc_{str_id}_n{normalized}_train.csv'
-    val_path = f'D:/MyProg/CSharp/CryptoMadness/Data/TrainVal/btc_{str_id}_n{normalized}_val.csv'
+    raise Error('Remove this line if you are sur e you want to destroy the DS')
+    root = f'C:/MyProgs/Python/CryptoMadness.Python/Data/'
+    ds_path = f'{root}CV_BTC_Data_{str_id}.csv'
+    train_path = f'{root}train_val/btc_{str_id}_n{normalized}_train.csv'
+    val_path = f'{root}train_val/btc_{str_id}_n{normalized}_val.csv'
 
     ds = pd.read_csv(ds_path, sep=',', header=0)
     ds = shuffle_dataset(ds)

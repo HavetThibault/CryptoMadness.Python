@@ -20,7 +20,7 @@ def get_training_epoch_stats(filename) -> TrainingEpochStats:
 
 
 def get_model_filename(model_name: str, stats: TrainingEpochStats, weights_only) -> str:
-    filename = f'{model_name}__{stats.epoch}__{stats.loss:.5f}__{stats.val_loss:.5f}'
+    filename = f'{model_name}__{stats.get_epoch()}__{stats.get_loss():.5f}__{stats.get_val_loss():.5f}'
     if weights_only:
         return filename + WEIGHTS_FILE_EXTENSION
     return filename + MODEL_FILE_EXTENSION

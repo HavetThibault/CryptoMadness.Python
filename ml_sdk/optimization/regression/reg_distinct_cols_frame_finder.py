@@ -81,7 +81,8 @@ class RegDistinctColsFrameFinder(RegFrameFinder):
                 progress += step_ratio
                 print(f'{progress * 100:.1f} %', end='\r')
 
-    def _find_distinct_columns(self, cols: list[str], count_inter=True) -> list[str]:
+    @staticmethod
+    def _find_distinct_columns(cols: list[str], count_inter=True) -> list[str]:
         distinct_cols = []
         for col in cols:
             inter_split = col.split('*')

@@ -11,7 +11,7 @@ inputs = 60
 total_inputs = inputs * 2
 after = 2
 outputs = 1
-iterations = 500
+iterations = 2
 batch_size = 64
 min_delta = 15
 lr_patience = 3
@@ -19,7 +19,7 @@ lr_factor = 0.1
 stop_patience = 6
 h1_init_lr = 0.01
 h2_init_lr = 0.04
-repeat = 2
+repeat = 3
 version = 1
 intervals = 0
 normalized = 1
@@ -33,6 +33,8 @@ train_path = root + f'train_val/btc_{str_id}_train.csv'
 val_path = root + f'train_val/btc_{str_id}_val.csv'
 h1_dest_dir = root + f'Models_{str_id}_1/'
 h2_dest_dir = root + f'Models_{str_id}_2/'
+h1_ext_dest_dir = root + f'Models_{str_id}_1_ext/'
+h2_ext_dest_dir = root + f'Models_{str_id}_2_ext/'
 h1_metrics_dir = h1_dest_dir + METRICS_DIR
 h2_metrics_dir = h2_dest_dir + METRICS_DIR
 model_name = f'mlp_v{version}'
@@ -100,6 +102,11 @@ def regression1_mlp():
     regression_mlp(h1_dest_dir, h1_init_lr, params_sets)
 
 
+def regression1_mlp_ext():
+    params_sets = [[65 + i * 15] for i in range(3)]
+    regression_mlp(h1_ext_dest_dir, h1_init_lr, params_sets)
+
+
 def regression1_metrics():
     regression_metrics(h1_dest_dir, h1_init_lr, h1_metrics_dir)
 
@@ -107,6 +114,11 @@ def regression1_metrics():
 def regression2_mlp():
     params_sets = [[20 + i * 15, 10 + i * 15] for i in range(3)]
     regression_mlp(h2_dest_dir, h2_init_lr, params_sets)
+
+
+def regression2_mlp_ext():
+    params_sets = [[65 + i * 15, 50 + i * 15] for i in range(3)]
+    regression_mlp(h2_ext_dest_dir, h2_init_lr, params_sets)
 
 
 def regression2_mlp_metrics():

@@ -1,4 +1,5 @@
-from crypto.mlp_experiences.regressions import regression2_mlp_metrics
+from crypto.mlp_experiences.regressions import *
 
 if __name__ == '__main__':
-    regression2_mlp_metrics()
+    # regression1_mlp()
+    regression1_metrics()

@@ -30,6 +30,9 @@ class BestModelCheckpoint(tf.keras.callbacks.Callback):
         self._best_stats = None
         self._last_learning_rate = None
 
+    def get_best_stats(self):
+        return self._best_stats
+
     def on_epoch_begin(self, epoch, logs=None):
         optimizer = self.model.optimizer
         if isinstance(optimizer.learning_rate, tf.keras.optimizers.schedules.LearningRateSchedule):

@@ -11,28 +11,29 @@ from ml_sdk.analyse.success_rate import SuccessRate
 from ml_sdk.dataset.cook.ds_source_file import read_dataset, write_dataset
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
 from ml_sdk.optimization.parameters_matrix_generator import params_set_to_str
-from ml_sdk.training.training_memory import TrainingMemory
+from ml_sdk.training.trainings_memory import TrainingsMemory
 
 
 class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
     METRIC_FILE = 'metrics.csv'
+    COLUMNS = ['params_set', 'increase_success', 'increase_total', 'increase_success_rate',
+               'decrease_success', 'decrease_total', 'decrease_success_rate']
 
     def __init__(self, val_filepath, dest_folder, min_close, max_close):
         self._val_filepath: str = val_filepath
         self._dest_folder = dest_folder
         self._min_close = min_close
         self._max_close = max_close
-        self._file_desc = None
-        self._writer = None
+        self._metrics_rows = []
 
     def process_start(self):
-        self._file_desc = open(self._dest_folder + self.METRIC_FILE, 'w', newline='\n')
-        self._writer = get_csv_writer(self._file_desc)
-        self._writer.writerow(('params_set', 'increase_success', 'increase_total', 'increase_success_rate',
-                               'decrease_success', 'decrease_total', 'decrease_success_rate'))
+        pass
 
     def process_end(self):
-        self._file_desc.close()
+        write_dataset(
+            pd.DataFrame(self._metrics_rows, columns=self.COLUMNS),
+            self._dest_folder + self.METRIC_FILE,
+            header=True)
 
     def process(self, params_set, filename, predictions: pd.DataFrame):
         val_df = read_dataset(self._val_filepath, header=0)
@@ -56,7 +57,7 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
                     decrease_success.add_right()
                 else:
                     decrease_success.add_wrong()
-        self._writer.writerow([
+        self._metrics_rows.append([
             params_set_to_str(params_set),
             increase_success.get_right(),
             increase_success.get_total(),

@@ -9,7 +9,7 @@ from ml_sdk.analyse.reg_model_labels_and_preds_instantiator import RegModelLabel
 from ml_sdk.analyse.trainings_analyses import calculate_models_val_labels_and_preds
 from ml_sdk.dataset.cook.ds_source_file import write_dataset, read_dataset
 from ml_sdk.model.creator.model_creator import ModelCreator
-from ml_sdk.training.training_memory import TrainingMemory
+from ml_sdk.training.trainings_memory import TrainingsMemory
 
 
 PREDICTIONS_DIR = 'Predictions/'
@@ -22,10 +22,10 @@ def analyze(model_creator: ModelCreator, labels_and_preds_instatiator: ModelLabe
 
     val_ds, val_len = ds_creator.get_val_ds()
     training_mem_name = model_creator.get_model_name()
-    training_mem: TrainingMemory = TrainingMemory.load_instance(
-        files_dir + training_mem_name + TrainingMemory.FILE_EXT)
+    training_mem: TrainingsMemory = TrainingsMemory.load_instance(
+        files_dir + training_mem_name + TrainingsMemory.FILE_EXT)
     progress.reset(
-        val_len * training_mem.get_params_set_cnt() * training_mem.get_repeat(),
+        val_len * training_mem.get_params_set_cnt(),
         int(val_len * progress_ratio))
     progress.start_resume()
 
@@ -39,7 +39,7 @@ def analyze(model_creator: ModelCreator, labels_and_preds_instatiator: ModelLabe
 
         os.mkdir(pred_dir)
         for model_val_labels_and_preds in models_val_labels_and_preds:
-            predictions_filename = TrainingMemory.get_model_filename(
+            predictions_filename = TrainingsMemory.get_model_filename(
                 model_val_labels_and_preds.get_model_name(),
                 model_val_labels_and_preds.get_training_mem_index(),
                 model_val_labels_and_preds.get_training_mem_sub_index(),
@@ -56,19 +56,20 @@ def analyze(model_creator: ModelCreator, labels_and_preds_instatiator: ModelLabe
 def apply_labels_and_preds(model_creator: ModelCreator, files_dir: str, progress: WorkProgressState,
                            apply: LabelsAndPredsProcessor):
     training_mem_name = model_creator.get_model_name()
-    training_mem: TrainingMemory = TrainingMemory.load_instance(
-        files_dir + training_mem_name + TrainingMemory.FILE_EXT)
-    params_matrix = training_mem.get_params_matrix()
-    progress.reset(len(params_matrix) * training_mem.repeat, 1)
+    training_mem: TrainingsMemory = TrainingsMemory.load_instance(
+        files_dir + training_mem_name + TrainingsMemory.FILE_EXT)
+    trainings_results = training_mem.get_trainings_results()
+    progress.reset(training_mem.get_params_set_cnt(), 1)
     progress.start_resume()
     apply.process_start()
-    for i, params_set in params_matrix.items():
-        if training_mem.get_all_training_stats()[i] is None:
+    for i, training_results in enumerate(trainings_results):
+        if training_results.get_stats() is None:
             continue
-        for k in range(training_mem.repeat):
-            predictions_filename = TrainingMemory.get_model_filename(
+        for k, stat in enumerate(training_results.get_stats()):
+            predictions_filename = TrainingsMemory.get_model_filename(
                 model_creator.get_model_name(), i, k, False)
             predictions_filename = rm_file_ext(predictions_filename) + '.csv'
-            apply.process(params_set, predictions_filename, read_dataset(files_dir + PREDICTIONS_DIR + predictions_filename, header=0))
+            predictions_df = read_dataset(files_dir + PREDICTIONS_DIR + predictions_filename, header=0)
+            apply.process(training_results.get_params_set(), predictions_filename, predictions_df)
             progress.increment_done()
     apply.process_end()

@@ -6,6 +6,6 @@ def get_csv_writer(file_descriptor):
 
 
 def read_headers(filepath):
-    with open(filepath, 'w', newline='\n') as csvfile:
+    with open(filepath, 'r', newline='\n') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='.', quoting=csv.QUOTE_MINIMAL)
-        return next(iter(reader))
+        return next(reader)

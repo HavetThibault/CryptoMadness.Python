@@ -18,7 +18,7 @@ from ml_sdk.model.layers.output.category_output_layer_builder import CategoryOut
 from ml_sdk.model.layers.output.float_output_layer_builder import FloatOutputLayerBuilder
 from ml_sdk.training.best_model_checkpoint import BestModelCheckpoint
 from ml_sdk.training.callbacks import get_plateau_sheduler, get_early_stopping
-from ml_sdk.training.training_memory import TrainingMemory
+from ml_sdk.training.trainings_memory import TrainingsMemory
 from ml_sdk.training.trainings_runner import run_trainings
 from ml_sdk.training.val_loss_error_calculator import ValLossErrorCalculator
 
@@ -44,7 +44,7 @@ def classification_mlp_process(
     for i in range(len(columns)):
         record_struct.append(RecordFieldType(RecordFieldType.FLOAT))
 
-    memory_filepath = dest_dir + model_name + TrainingMemory.FILE_EXT
+    memory_filepath = dest_dir + model_name + TrainingsMemory.FILE_EXT
     error_calculator = ValLossErrorCalculator()
     ds_creator_builder = MLPDsCreatorBuilder(
         train_path,
@@ -145,7 +145,7 @@ def regression_mlp_process(
         lr_factor,
         stop_patience,
         iterations):
-    memory_filepath = dest_dir + model_name + TrainingMemory.FILE_EXT
+    memory_filepath = dest_dir + model_name + TrainingsMemory.FILE_EXT
     error_calculator = ValLossErrorCalculator()
     model_creator = get_mlp_regression_model_creator(
         train_path,
