@@ -6,8 +6,8 @@ from ml_sdk.optimization.regression.reg_calculator import RegCalculator
 from ml_sdk.optimization.regression.reg_helper import first_significant_best_frame
 from ml_sdk.optimization.regression.reg_results_interpret import RegResultsInterpret
 from ml_sdk.training.error_calculator import ErrorCalculator
-from ml_sdk.training.trainings_memory import TrainingsMemory
-from ml_sdk.training.trainings_runner import lowest_error_params_set
+from ml_sdk.training.models_results_infos import ModelsResultsInfos
+from ml_sdk.training.predefined_training_runner import lowest_error_params_set
 
 
 def optimize_and_print(
@@ -20,7 +20,7 @@ def optimize_and_print(
         results_interpret: RegResultsInterpret,
         dir_prefix: str,
         verbose: bool):
-    training_mem: TrainingsMemory = TrainingsMemory.load_instance(training_mem_path)
+    training_mem: ModelsResultsInfos = ModelsResultsInfos.load_instance(training_mem_path)
     independent_var = training_mem.get_params_df(cols)
     dependent_var = training_mem.get_target_df(error_calc)
     print('======================== Loaded ========================', independent_var.join(dependent_var), sep='\n')

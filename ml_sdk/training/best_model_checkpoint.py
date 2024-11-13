@@ -17,15 +17,15 @@ class BestModelCheckpoint(tf.keras.callbacks.Callback):
         self._model_name = model_name
         self._best_value = None
         self._best_stats = None
-        self._best_model_file_path = None
+        self._best_model_filename = None
         self._error_calc = error_calc
         self._last_learning_rate = None
 
-    def get_best_model_file_path(self):
-        return self._best_model_file_path
+    def get_best_model_filename(self):
+        return self._best_model_filename
 
     def on_train_begin(self, logs=None):
-        self._best_model_file_path = None
+        self._best_model_filename = None
         self._best_value = None
         self._best_stats = None
         self._last_learning_rate = None
@@ -42,7 +42,7 @@ class BestModelCheckpoint(tf.keras.callbacks.Callback):
         if self._last_learning_rate is not None and not math.isclose(learning_rate, self._last_learning_rate):
             if self._verbose:
                 print('Continuing from best weights...')
-            self.model.load_weights(self._serialization_dir + self._best_model_file_path)
+            self.model.load_weights(self._serialization_dir + self._best_model_filename)
         self._last_learning_rate = learning_rate
 
     def on_epoch_end(self, epoch, logs=None):
@@ -70,9 +70,9 @@ class BestModelCheckpoint(tf.keras.callbacks.Callback):
             model_file_path = self._serialization_dir + get_model_filename(self._model_name, self._best_stats,
                                                                           self._save_weights_only)
             self.model.save(model_file_path, overwrite=True)
-            if self._best_model_file_path is not None:
-                os.remove(self._serialization_dir + self._best_model_file_path)
-            self._best_model_file_path = get_model_filename(self._model_name, self._best_stats, self._save_weights_only)
+            if self._best_model_filename is not None:
+                os.remove(self._serialization_dir + self._best_model_filename)
+            self._best_model_filename = get_model_filename(self._model_name, self._best_stats, self._save_weights_only)
         else:
             if self._verbose > 0:
                 print(f"\nEpoch {epoch + 1}: Custom metric did not improve from {self._best_value}")

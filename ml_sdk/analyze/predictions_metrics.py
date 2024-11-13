@@ -9,7 +9,6 @@ from helper_sdk.list_helper import str_list_equals
 from helper_sdk.work_progress_state import WorkProgressState
 from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 
-
 PREDICTION_COL_END = ' prediction'
 
 

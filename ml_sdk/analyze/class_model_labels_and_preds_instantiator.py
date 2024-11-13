@@ -1,7 +1,7 @@
-from ml_sdk.analyse.class_model_labels_and_preds import ClassModelLabelsAndPreds
-from ml_sdk.analyse.model_labels_and_preds import ModelLabelsAndPreds
-from ml_sdk.analyse.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
-from ml_sdk.analyse.predictions_metrics import calculate_classification_labels_and_predictions, \
+from ml_sdk.analyze.class_model_labels_and_preds import ClassModelLabelsAndPreds
+from ml_sdk.analyze.model_labels_and_preds import ModelLabelsAndPreds
+from ml_sdk.analyze.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
+from ml_sdk.analyze.predictions_metrics import calculate_classification_labels_and_predictions, \
     calculate_classification_predictions_and_accuracy
 from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 

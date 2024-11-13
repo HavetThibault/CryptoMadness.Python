@@ -1,11 +1,5 @@
 from configparser import Error
 
-import pandas as pd
-
-from helper_sdk.pandas_helper import df_min_max
-from ml_sdk.dataset.cook.ds_source_file import shuffle_dataset
-from ml_sdk.dataset.file.model_ds_creation import create_save_train_val_ds
-
 if __name__ == '__main__':
     inputs = 60
     after = 2

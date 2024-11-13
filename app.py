@@ -1,5 +1,4 @@
-from crypto.mlp_experiences.regressions import *
+from crypto.mlp_experiences.mlp_optimization import optimize_mlp_h1
 
 if __name__ == '__main__':
-    # regression1_mlp()
-    regression1_metrics()
+    optimize_mlp_h1()

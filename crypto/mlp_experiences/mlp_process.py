@@ -1,25 +1,17 @@
-from asyncio import sleep
-
-import numpy as np
-import pandas as pd
-
 from helper_sdk.csv_helper import read_headers
 from helper_sdk.work_progress_state import WorkProgressState, default_progress_display
-from ml_sdk.analyse.analyze import analyze
-from ml_sdk.analyse.class_model_labels_and_preds_instantiator import ClassModelLabelsAndPredsInstantiator
-from ml_sdk.analyse.reg_model_labels_and_preds_instantiator import RegModelLabelsAndPredsInstantiator
+from ml_sdk.analyze.analyze import analyze
+from ml_sdk.analyze.reg_model_labels_and_preds_instantiator import RegModelLabelsAndPredsInstantiator
 from ml_sdk.dataset.file.file_record_field_type import RecordFieldType
 from ml_sdk.dataset.file.file_record_struct_builder import FileRecordStructBuilder
-from ml_sdk.dataset.float_categories_calculator import FloatCategoriesCalculator
 from ml_sdk.dataset.model_feeder.mlp_ds_creator_builder import MLPDsCreatorBuilder
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
 from ml_sdk.model.layers.end_rm_name_giver import EndRmNameGiver
 from ml_sdk.model.layers.output.category_output_layer_builder import CategoryOutputLayerBuilder
 from ml_sdk.model.layers.output.float_output_layer_builder import FloatOutputLayerBuilder
-from ml_sdk.training.best_model_checkpoint import BestModelCheckpoint
 from ml_sdk.training.callbacks import get_plateau_sheduler, get_early_stopping
-from ml_sdk.training.trainings_memory import TrainingsMemory
-from ml_sdk.training.trainings_runner import run_trainings
+from ml_sdk.training.models_results_infos import ModelsResultsInfos
+from ml_sdk.training.predefined_training_runner import run_trainings
 from ml_sdk.training.val_loss_error_calculator import ValLossErrorCalculator
 
 
@@ -44,7 +36,7 @@ def classification_mlp_process(
     for i in range(len(columns)):
         record_struct.append(RecordFieldType(RecordFieldType.FLOAT))
 
-    memory_filepath = dest_dir + model_name + TrainingsMemory.FILE_EXT
+    memory_filepath = dest_dir + model_name + ModelsResultsInfos.FILE_EXT
     error_calculator = ValLossErrorCalculator()
     ds_creator_builder = MLPDsCreatorBuilder(
         train_path,
@@ -72,17 +64,14 @@ def classification_mlp_process(
         get_early_stopping(min_delta, stop_patience)
     ]
 
-    weights_dir = dest_dir + 'Temp/'
-    archived_dir = dest_dir + 'Archived/'
     progress = WorkProgressState(len(params_sets) * repeat, 1)
     progress.add_listener(default_progress_display)
     run_trainings(
         params_sets,
         model_creator,
         memory_filepath,
-        weights_dir,
+        dest_dir,
         iterations,
-        archived_dir,
         error_calculator,
         repeat,
         loss='categorical_crossentropy',
@@ -145,7 +134,7 @@ def regression_mlp_process(
         lr_factor,
         stop_patience,
         iterations):
-    memory_filepath = dest_dir + model_name + TrainingsMemory.FILE_EXT
+    memory_filepath = dest_dir + model_name + ModelsResultsInfos.FILE_EXT
     error_calculator = ValLossErrorCalculator()
     model_creator = get_mlp_regression_model_creator(
         train_path,
@@ -162,17 +151,14 @@ def regression_mlp_process(
         get_early_stopping(min_delta, stop_patience)
     ]
 
-    weights_dir = dest_dir + 'Temp/'
-    archived_dir = dest_dir + 'Archived/'
     progress = WorkProgressState(len(params_sets) * repeat, 1)
     progress.add_listener(default_progress_display)
     run_trainings(
         params_sets,
         model_creator,
         memory_filepath,
-        weights_dir,
+        dest_dir,
         iterations,
-        archived_dir,
         error_calculator,
         repeat,
         loss='mean_squared_error',

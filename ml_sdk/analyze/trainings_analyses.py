@@ -1,14 +1,14 @@
 import pandas as pd
 
 from helper_sdk.work_progress_state import WorkProgressState
-from ml_sdk.analyse.class_model_labels_and_preds import ClassModelLabelsAndPreds
-from ml_sdk.analyse.model_labels_and_preds import ModelLabelsAndPreds
-from ml_sdk.analyse.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
-from ml_sdk.analyse.model_output_error import ModelsOutputsErrors
-from ml_sdk.analyse.predictions_metrics import get_params_intervals
+from ml_sdk.analyze.class_model_labels_and_preds import ClassModelLabelsAndPreds
+from ml_sdk.analyze.model_labels_and_preds import ModelLabelsAndPreds
+from ml_sdk.analyze.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
+from ml_sdk.analyze.model_output_error import ModelsOutputsErrors
+from ml_sdk.analyze.predictions_metrics import get_params_intervals
 from ml_sdk.model.creator.model_creator import ModelCreator
 from ml_sdk.plot.model_stats import trainings_errors_boxplot
-from ml_sdk.training.trainings_memory import TrainingsMemory
+from ml_sdk.training.models_results_infos import ModelsResultsInfos
 
 
 def calculate_models_val_labels_and_preds(training_memories_model_creator: list[ModelCreator],
@@ -20,8 +20,8 @@ def calculate_models_val_labels_and_preds(training_memories_model_creator: list[
     for model_creator in training_memories_model_creator:
         print(f'Calculating predictions of {model_creator.get_model_name()}...')
         training_mem_name = model_creator.get_model_name()
-        training_mem: TrainingsMemory = TrainingsMemory.load_instance(
-            training_mem_dir + training_mem_name + TrainingsMemory.FILE_EXT)
+        training_mem: ModelsResultsInfos = ModelsResultsInfos.load_instance(
+            training_mem_dir + training_mem_name + ModelsResultsInfos.FILE_EXT)
         trainings_results = training_mem.get_trainings_results()
         for i, training_results in enumerate(trainings_results):
             if training_results.get_stats() is None:
@@ -30,7 +30,7 @@ def calculate_models_val_labels_and_preds(training_memories_model_creator: list[
             for k in range(training_results.get_stats_count()):
                 weights_file = training_mem.get_model_filename(model_creator.get_model_name(), i, k, True)
                 model = model_creator.load_model_from_weights(
-                    params_set, training_mem_dir + 'archived/' + weights_file)
+                    params_set, training_mem.get_archived_dir() + weights_file)
                 val_ds, val_len = model_creator.get_ds_creator_builder().get_ds_creator(1).get_val_ds()
                 models_labels_and_preds.append(
                     model_labels_and_preds_inst.instantiate(

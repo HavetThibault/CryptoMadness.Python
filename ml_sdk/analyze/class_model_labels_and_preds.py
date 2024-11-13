@@ -1,4 +1,4 @@
-from ml_sdk.analyse.model_labels_and_preds import ModelLabelsAndPreds
+from ml_sdk.analyze.model_labels_and_preds import ModelLabelsAndPreds
 
 
 class ClassModelLabelsAndPreds(ModelLabelsAndPreds):

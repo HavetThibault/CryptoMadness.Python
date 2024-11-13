@@ -1,27 +1,20 @@
-from io import TextIOWrapper
-from typing import TextIO
-
 import pandas as pd
 
-from helper_sdk.csv_helper import get_csv_writer
-from helper_sdk.file_helper import rm_file_ext
-from ml_sdk.analyse.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
-from ml_sdk.analyse.predictions_metrics import PREDICTION_COL_END
-from ml_sdk.analyse.success_rate import SuccessRate
+from ml_sdk.analyze.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
+from ml_sdk.analyze.predictions_metrics import PREDICTION_COL_END
+from ml_sdk.analyze.success_rate import SuccessRate
 from ml_sdk.dataset.cook.ds_source_file import read_dataset, write_dataset
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
 from ml_sdk.optimization.parameters_matrix_generator import params_set_to_str
-from ml_sdk.training.trainings_memory import TrainingsMemory
 
 
 class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
-    METRIC_FILE = 'metrics.csv'
     COLUMNS = ['params_set', 'increase_success', 'increase_total', 'increase_success_rate',
                'decrease_success', 'decrease_total', 'decrease_success_rate']
 
-    def __init__(self, val_filepath, dest_folder, min_close, max_close):
+    def __init__(self, val_filepath, metrics_path, min_close, max_close):
         self._val_filepath: str = val_filepath
-        self._dest_folder = dest_folder
+        self._metrics_path = metrics_path
         self._min_close = min_close
         self._max_close = max_close
         self._metrics_rows = []
@@ -32,7 +25,7 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
     def process_end(self):
         write_dataset(
             pd.DataFrame(self._metrics_rows, columns=self.COLUMNS),
-            self._dest_folder + self.METRIC_FILE,
+            self._metrics_path,
             header=True)
 
     def process(self, params_set, filename, predictions: pd.DataFrame):

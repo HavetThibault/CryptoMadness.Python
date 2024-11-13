@@ -1,6 +1,6 @@
-from ml_sdk.analyse.model_labels_and_preds import ModelLabelsAndPreds
-from ml_sdk.analyse.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
-from ml_sdk.analyse.predictions_metrics import calculate_labels_and_predictions
+from ml_sdk.analyze.model_labels_and_preds import ModelLabelsAndPreds
+from ml_sdk.analyze.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
+from ml_sdk.analyze.predictions_metrics import calculate_labels_and_predictions
 
 
 class RegModelLabelsAndPredsInstantiator(ModelLabelsAndPredsInstantiator):

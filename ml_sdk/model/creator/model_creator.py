@@ -1,5 +1,6 @@
 from typing import Optional
 
+import keras.backend
 import tensorflow as tf
 from keras import Model
 from keras.callbacks import History
@@ -9,6 +10,7 @@ from helper_sdk.exception_helper import format_exception_to_str
 from ml_sdk.dataset.model_feeder.ds_creator_builder import DsCreatorBuilder
 from ml_sdk.model.layers.layer_name_giver import LayerNameGiver
 from ml_sdk.model.layers.output.output_layer_builder import OutputLayerBuilder
+from ml_sdk.training.parameter import Parameter
 
 
 class ModelCreator:
@@ -28,7 +30,7 @@ class ModelCreator:
     def get_ds_creator_builder(self) -> DsCreatorBuilder:
         return self._ds_creator_builder
 
-    def create_untrained_model(self, params_set: list, optimizer=None, loss=None) -> Model:
+    def create_untrained_model(self, params_set: list[Parameter], optimizer=None, loss=None) -> Model:
         raise NotImplementedError('Method "_create_untrained_model" not implemented')
 
     def create_and_train_model(self, params_set: list, iterations_nbr, callbacks, give_up_cpu, on_cpu, optimizer=None,
@@ -84,6 +86,8 @@ class ModelCreator:
                         verbose=verbose)
         except Exception as e:
             print(format_exception_to_str(e))
+        finally:
+            keras.backend.clear_session()
 
     def load_model_from_weights(self, params_set: list, weights_file: str, optimizer=None, loss=None) -> Model:
         try:

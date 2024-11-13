@@ -1,9 +1,7 @@
 import math
 import os
-import threading
 
 import pandas as pd
-import tensorflow as tf
 
 from helper_sdk.work_progress_state import WorkProgressState
 from ml_sdk.model.creator.model_creator import ModelCreator
@@ -13,17 +11,16 @@ from ml_sdk.optimization.regression.reg_calculator import RegCalculator
 from ml_sdk.optimization.regression.reg_frame_finder import CONST_COL
 from ml_sdk.plot.model_stats import plot_metrics
 from ml_sdk.training.best_model_checkpoint import BestModelCheckpoint
-from ml_sdk.training.model_filename_mgmt import get_training_epoch_stats, WEIGHTS_FILE_EXTENSION, MODEL_FILE_EXTENSION
-from ml_sdk.training.trainings_memory import TrainingsMemory
+from ml_sdk.training.model_filename_mgmt import WEIGHTS_FILE_EXTENSION, MODEL_FILE_EXTENSION
+from ml_sdk.training.models_results_infos import ModelsResultsInfos, archive
 
 
 def run_trainings(
         params_matrix,
         model_creator: ModelCreator,
         memory_filepath: str,
-        weight_dir: str,
+        dest_dir: str,
         iterations_nbr: int,
-        archive_weights_dir: str,
         error_calc,
         repeat,
         additional_callbacks=None,
@@ -35,16 +32,18 @@ def run_trainings(
         give_up_cpu=True,
         loss=None,
         work_progress: WorkProgressState=None,
-        on_cpu=False,
-        can_interrupt: threading.Event=None) -> TrainingsMemory:
-    if can_interrupt is not None:
-        can_interrupt.set()
-    if not os.path.exists(archive_weights_dir):
-        os.mkdir(archive_weights_dir)
-    if os.path.exists(weight_dir):
-        clean_weights_dir(weight_dir, weights_only)
-    training_memory = TrainingsMemory.get_instance(memory_filepath, weight_dir)
+        on_cpu=False) -> ModelsResultsInfos:
+
+    training_memory = ModelsResultsInfos.get_instance(memory_filepath, dest_dir)
     print('Created/loaded training memory: ', str(training_memory))
+    weight_dir = training_memory.get_weights_dir()
+    archived_dir = training_memory.get_archived_dir()
+
+    if not os.path.exists(archived_dir):
+        os.mkdir(archived_dir)
+    if os.path.exists(training_memory.get_weights_dir()):
+        clean_weights_dir(weight_dir, weights_only)
+
     serializer = BestModelCheckpoint(weight_dir, model_creator.get_model_name(), error_calc, verbose,
                                      weights_only=weights_only)
     if additional_callbacks is None:
@@ -76,32 +75,21 @@ def run_trainings(
                 verbose=verbose,
                 loss=loss,
                 on_cpu=on_cpu)
-            if can_interrupt is not None:
-                can_interrupt.clear()
 
-            try:
-                if training_hist is not None:
-                    if plot_errors:
-                        plot_metrics(
-                            training_hist.history,
-                            model_creator.get_model_name() + params_set_to_str(params_set),
-                            ['loss', 'val_loss'],
-                            ylim=ylim)
-                    best_model_path = weight_dir + serializer.get_best_model_file_path()
-                    os.rename(
-                        best_model_path,
-                        archive_weights_dir + training_memory.get_model_filename(
-                            model_creator.get_model_name(), params_set_index, sub_params_set_index, weights_only))
-                    training_memory.add_training_stats(params_set, serializer.get_best_stats())
-                else:
-                    training_memory.add_training_stats(params_set, None)
-                training_memory.save()
-                if work_progress is not None:
-                    work_progress.increment_done()
-            finally:
-                tf.keras.backend.clear_session()
-                if can_interrupt is not None:
-                    can_interrupt.set()
+            if training_hist is not None:
+                if plot_errors:
+                    plot_metrics(
+                        training_hist.history,
+                        model_creator.get_model_name() + params_set_to_str(params_set),
+                        ['loss', 'val_loss'],
+                        ylim=ylim)
+
+            archive(training_memory, params_set, model_creator, serializer, training_hist, sub_params_set_index,
+                    weights_only)
+
+            if work_progress is not None:
+                work_progress.increment_done()
+
             if current_training_results is None:
                 current_training_results = training_memory.get_training_results(params_set)
     return training_memory

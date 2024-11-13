@@ -64,6 +64,7 @@ python -m pip install "cloudpickle<3.1"
 python -m pip install "opencv-python<4.10" 
 python -m pip install "statsmodels<0.15"
 python -m pip install "scipy<1.14"
+python -m pip install "scikit-optimize<0.11"
 ```
 - Runtime 2 (python 3.10 ou 3.11, qu'importe)
 ```

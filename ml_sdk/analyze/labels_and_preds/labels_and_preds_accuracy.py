@@ -1,14 +1,13 @@
-import csv
 import math
 
 import pandas as pd
 
 from helper_sdk.csv_helper import get_csv_writer
-from ml_sdk.analyse.classification.specific_class_metrics import SpecificClassMetrics
-from ml_sdk.analyse.predictions_metrics import PREDICTION_COL_END
-from ml_sdk.analyse.success_rate import SuccessRate
-from ml_sdk.analyse.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
-from ml_sdk.analyse.classification.output_classes import OutputClasses
+from ml_sdk.analyze.classification.output_classes import OutputClasses
+from ml_sdk.analyze.classification.specific_class_metrics import SpecificClassMetrics
+from ml_sdk.analyze.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
+from ml_sdk.analyze.predictions_metrics import PREDICTION_COL_END
+from ml_sdk.analyze.success_rate import SuccessRate
 
 
 class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):

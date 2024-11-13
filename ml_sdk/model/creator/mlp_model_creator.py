@@ -2,7 +2,8 @@ from keras import Model, Input
 from keras.optimizers import Adam
 
 from ml_sdk.model.creator.model_creator import ModelCreator
-from ml_sdk.model.layers.output.create_ending import create_sigmoid_layers, create_relu_layers
+from ml_sdk.model.layers.output.create_ending import create_relu_layers
+from ml_sdk.training.parameter import Parameter
 
 
 class MLPModelCreator(ModelCreator):
@@ -15,8 +16,8 @@ class MLPModelCreator(ModelCreator):
         self._inputs: int = inputs
         self._init_lr: float = init_lr
 
-    def create_untrained_model(self, params_set: list, optimizer=None, loss=None) -> Model:
-        hidden_layers: list[int] = params_set
+    def create_untrained_model(self, params_set: list[Parameter], optimizer=None, loss=None) -> Model:
+        hidden_layers = [parameter.get_value() for parameter in params_set]
 
         input_layer = Input(shape=(self._inputs, ), name=self._layer_name_giver.matching_input_name(self.INPUT_NAME))
         end_layers_output = create_relu_layers(input_layer, self._output_builder, hidden_layers)

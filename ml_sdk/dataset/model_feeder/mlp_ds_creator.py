@@ -1,6 +1,6 @@
-from ml_sdk.dataset.model_feeder.ds_creator import DsCreator
 import tensorflow as tf
 
+from ml_sdk.dataset.model_feeder.ds_creator import DsCreator
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
 
 
