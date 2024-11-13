@@ -1,3 +1,5 @@
+import os.path
+
 from skopt import gp_minimize
 
 from crypto.mlp_experiences.mlp_process import get_mlp_regression_model_creator
@@ -40,10 +42,10 @@ def optimize_mlp_h1():
     )
     gp_minimize(
         training_runner.get_training_metric,
-        [(1, 200)],
+        [(1, 130)],
         n_calls=100,
         random_state=10,
-        verbose=True)
+        verbose=False)
 
 
 def optimize_mlp_h2():
@@ -77,8 +79,8 @@ def optimize_mlp_h2():
     )
     gp_minimize(
         training_runner.get_training_metric,
-        [(1, 200), (1, 200)],
+        [(1, 130), (1, 130)],
         n_calls=100,
         random_state=10,
-        verbose=True
+        verbose=False
         )

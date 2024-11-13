@@ -34,7 +34,7 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
         val_iter = iter(val_df.iloc)
         increase_success = SuccessRate()
         decrease_success = SuccessRate()
-        last_close_col = self._get_last_close_col(list(val_df.columns))
+        last_close_col = self.get_last_close_col(list(val_df.columns))
         for predictions_row in predictions_iter:
             val_row = next(val_iter)
             prediction = predictions_row[MLPModelCreator.OUTPUT_NAME + PREDICTION_COL_END]
@@ -60,7 +60,7 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
             f'{decrease_success.get_rate() * 100: 0.3f}%'])
 
     @staticmethod
-    def _get_last_close_col(cols: list[str]) -> str:
+    def get_last_close_col(cols: list[str]) -> str:
         max_index = None
         last_close = None
         for col in cols:

@@ -65,7 +65,7 @@ def run_trainings(
                 sub_params_set_index = current_training_results.get_stats_count()
             else:
                 sub_params_set_index = 0
-            print(f'{params_set_index}.{sub_params_set_index}. Training for: {params_set}')
+            print(f'{params_set_index}.{sub_params_set_index}. Training for: [{params_set_to_str(params_set)}]')
             training_hist = model_creator.create_and_train_model(
                 params_set,
                 iterations_nbr,

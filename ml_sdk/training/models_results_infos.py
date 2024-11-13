@@ -116,6 +116,8 @@ def archive(models_results_infos: ModelsResultsInfos, params_set, model_creator,
     if training_hist is not None:
         params_set_index = models_results_infos.get_params_set_index(params_set)
         best_model_path = models_results_infos.get_weights_dir() + serializer.get_best_model_filename()
+        if not os.path.exists(models_results_infos.get_archived_dir()):
+            os.mkdir(models_results_infos.get_archived_dir())
         os.rename(
             best_model_path,
             models_results_infos.get_archived_dir() + models_results_infos.get_model_filename(

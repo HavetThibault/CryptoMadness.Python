@@ -6,11 +6,11 @@ class Regression1Params:
     ITERATIONS = 500
     BATCH_SIZE = 64
     MIN_DELTA = 15
-    LR_PATIENCE = 5
+    LR_PATIENCE = 6
     LR_FACTOR = 0.1
-    STOP_PATIENCE = 11
-    H1_INIT_LR = 0.01
-    H2_INIT_LR = 0.05
+    STOP_PATIENCE = 12
+    H1_INIT_LR = 0.02
+    H2_INIT_LR = 0.04
     REPEAT = 4
     VERSION = 1
     INTERVALS = 0
