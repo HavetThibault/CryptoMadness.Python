@@ -34,6 +34,7 @@ class ModelsResultsInfos:
     @staticmethod
     def static_get_metrics_path(dest_dir, model_name):
         return dest_dir + model_name + '__' + ModelsResultsInfos.METRICS_FILE_END
+
     @staticmethod
     def get_model_filename(model_name, index, sub_index, weights_only) -> str:
         filename = f'{model_name}__{index}__{sub_index}'
@@ -68,6 +69,9 @@ class ModelsResultsInfos:
 
     def get_archived_dir(self):
         return self._dest_dir + self.ARCHIVED_DIR
+
+    def get_predictions_dir(self):
+        return self._dest_dir + self.PREDICTIONS_DIR
 
     def get_metrics_path(self, model_name):
         return self.static_get_metrics_path(self._dest_dir, model_name)

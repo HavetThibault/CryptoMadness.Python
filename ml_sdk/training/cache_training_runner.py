@@ -7,7 +7,7 @@ from ml_sdk.training.parameter import Parameter
 
 
 class CacheTrainingRunner:
-    _VERBOSE = 1
+    _VERBOSE = 0
     _WEIGHTS_ONLY = True
     _ON_CPU = False
 
@@ -36,7 +36,7 @@ class CacheTrainingRunner:
             serializer = BestModelCheckpoint(
                 weight_dir, self._model_creator.get_model_name(), self._error_calc, self._VERBOSE,
                 weights_only=self._WEIGHTS_ONLY)
-            print(f'{params_set_index}.{sub_params_set_index}. Training for: [{params_set_to_str(params_set)}]')
+            print(f'{params_set_index}.{sub_params_set_index}. Training for: {params_set_to_str(params_set)}')
             training_hist = self._model_creator.create_and_train_model(
                 params_set,
                 self._iterations,

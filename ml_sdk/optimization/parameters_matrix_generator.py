@@ -38,7 +38,7 @@ class ParametersMatrixGenerator:
 
 
 def params_set_to_str(params_set: list[Parameter]) -> str:
-    params_str = ''
+    params_str = '['
     for param in params_set:
         params_str += '{:0.1f}-'.format(param.get_value())
-    return params_str[:-1]
+    return params_str[:-1] + ']'

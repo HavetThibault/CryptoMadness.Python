@@ -8,6 +8,7 @@ from ml_sdk.analyze.classification.specific_class_metrics import SpecificClassMe
 from ml_sdk.analyze.labels_and_preds.labels_and_preds_processor import LabelsAndPredsProcessor
 from ml_sdk.analyze.predictions_metrics import PREDICTION_COL_END
 from ml_sdk.analyze.success_rate import SuccessRate
+from ml_sdk.training.training_epoch_stats import TrainingEpochStats
 
 
 class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
@@ -22,7 +23,7 @@ class LabelsAndPredsAcccuracy(LabelsAndPredsProcessor):
     def process_end(self):
         pass
 
-    def process(self, params_set, filename, predictions: pd.DataFrame):
+    def process(self, params_set, stat: TrainingEpochStats, filename, predictions: pd.DataFrame):
         sub_classes_metrics = dict[str, SpecificClassMetrics]()
         classes_metrics = dict[str, SuccessRate]()
         for output_class in self._classes:

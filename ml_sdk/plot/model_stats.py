@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from ml_sdk.optimization.parameters_matrix_generator import params_set_to_str
+from ml_sdk.training.training_results import TrainingResults
+
 
 def display_loss_val(cols: list[str], losses: list[float], val_losses: list[float], width=0.35):
     x = np.arange(len(cols))
@@ -49,11 +52,15 @@ def trainings_errors_boxplot(errors_list: list[pd.DataFrame], fig_size, cols: li
     plt.show()
 
 
-def trainings_errors_scatterplot(errors: list[list], fig_size, cols: list[str], ylim: Optional[tuple[int, int]] = None):
+def trainings_errors_scatterplot(results: list[TrainingResults], fig_size, ylim: Optional[tuple[int, int]] = None):
     plt.figure(figsize=fig_size)
-    x_positions = range(len(cols)+1)
-    for i, col in enumerate(cols):
-        plt.scatter([i+1] * len(errors[i]), errors[i], label=col)
+    x_positions = range(len(results)+1)
+    cols = []
+    for i, result in enumerate(results):
+        val_errors = [stat.get_val_loss() for stat in results[i].get_stats()]
+        col = params_set_to_str(result.get_params_set())
+        plt.scatter([i+1] * results[i].get_stats_count(), val_errors, label=col)
+        cols.append(col)
 
     plt.xticks(x_positions, [''] + cols)
 
@@ -63,8 +70,9 @@ def trainings_errors_scatterplot(errors: list[list], fig_size, cols: list[str], 
     plt.xlabel('Solutions')
     plt.ylabel('Errors')
     plt.legend()
-    plt.xlim((0.5, len(cols) + 0.5))
+    plt.xlim((0.5, len(results) + 0.5))
     plt.tight_layout()
+    plt.grid()
     if ylim is not None:
         plt.ylim(ylim)
     plt.show()

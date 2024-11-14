@@ -9,6 +9,12 @@ def default_progress_display(done, total, left_time):
             f'Left time: {format_delta_round_s(left_time)}\n')
 
 
+def get_default_progress_state(total: int = None):
+    progress = WorkProgressState(total, 1)
+    progress.add_listener(default_progress_display)
+    return progress
+
+
 class WorkProgressState:
     def __init__(self, total = None, estimation_step = 1):
         self._estimation_step = estimation_step

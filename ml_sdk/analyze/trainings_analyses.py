@@ -1,13 +1,18 @@
+import os.path
+
 import pandas as pd
 
+from helper_sdk.file_helper import rm_file_ext
 from helper_sdk.work_progress_state import WorkProgressState
 from ml_sdk.analyze.class_model_labels_and_preds import ClassModelLabelsAndPreds
 from ml_sdk.analyze.model_labels_and_preds import ModelLabelsAndPreds
 from ml_sdk.analyze.model_labels_and_preds_instantiator import ModelLabelsAndPredsInstantiator
 from ml_sdk.analyze.model_output_error import ModelsOutputsErrors
 from ml_sdk.analyze.predictions_metrics import get_params_intervals
+from ml_sdk.dataset.cook.ds_source_file import write_dataset, read_dataset
 from ml_sdk.model.creator.model_creator import ModelCreator
 from ml_sdk.plot.model_stats import trainings_errors_boxplot
+from ml_sdk.training.model_filename_mgmt import WEIGHTS_FILE_EXTENSION
 from ml_sdk.training.models_results_infos import ModelsResultsInfos
 
 
@@ -44,6 +49,46 @@ def calculate_models_val_labels_and_preds(training_memories_model_creator: list[
                         i,
                         k))
     return models_labels_and_preds
+
+
+def calculate_save_models_val_labels_and_preds(model_creator: ModelCreator,
+                                               training_mem_dir,
+                                               val_ds: pd.DataFrame,
+                                               predictions_instatiator: ModelLabelsAndPredsInstantiator,
+                                               progress: WorkProgressState):
+    print(f'Calculating predictions of {model_creator.get_model_name()}...')
+    training_mem_name = model_creator.get_model_name()
+    results: ModelsResultsInfos = ModelsResultsInfos.load_instance(
+        training_mem_dir + training_mem_name + ModelsResultsInfos.FILE_EXT)
+    trainings_results = results.get_trainings_results()
+    val_len = len(val_ds)
+    for i, training_results in enumerate(trainings_results):
+        if training_results.get_stats() is None:
+            continue
+        params_set = training_results.get_params_set()
+        for k in range(training_results.get_stats_count()):
+            weights_filename = results.get_model_filename(model_creator.get_model_name(), i, k, True)
+            preds_filename = weights_filename[:-len(WEIGHTS_FILE_EXTENSION)] + '.csv'
+            preds_path = results.get_predictions_dir() + preds_filename
+            if os.path.exists(preds_path) and len(read_dataset(preds_path, header=0)) == val_len:
+                continue
+            if os.path.exists(preds_path):
+                os.remove(preds_path)
+            model = model_creator.load_model_from_weights(
+                params_set, results.get_archived_dir() + weights_filename)
+            val_ds, val_len = model_creator.get_ds_creator_builder().get_ds_creator(1).get_val_ds()
+            model_labels_and_preds = \
+                predictions_instatiator.instantiate(
+                    model,
+                    val_ds,
+                    val_len,
+                    model_creator.get_batch_size(),
+                    model_creator.get_model_name(),
+                    params_set,
+                    progress,
+                    i,
+                    k)
+            write_dataset(model_labels_and_preds.get_labels_and_preds(), preds_path, header=True)
 
 
 def get_best_reg_models_perfs_df(models_labels_and_preds: list[ModelLabelsAndPreds], output_param_names,

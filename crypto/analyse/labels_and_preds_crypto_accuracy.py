@@ -6,11 +6,13 @@ from ml_sdk.analyze.success_rate import SuccessRate
 from ml_sdk.dataset.cook.ds_source_file import read_dataset, write_dataset
 from ml_sdk.model.creator.mlp_model_creator import MLPModelCreator
 from ml_sdk.optimization.parameters_matrix_generator import params_set_to_str
+from ml_sdk.training.training_epoch_stats import TrainingEpochStats
+from ml_sdk.training.training_results import TrainingResults
 
 
 class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
     COLUMNS = ['params_set', 'increase_success', 'increase_total', 'increase_success_rate',
-               'decrease_success', 'decrease_total', 'decrease_success_rate']
+               'decrease_success', 'decrease_total', 'decrease_success_rate', 'mean_squared_error']
 
     def __init__(self, val_filepath, metrics_path, min_close, max_close):
         self._val_filepath: str = val_filepath
@@ -28,7 +30,7 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
             self._metrics_path,
             header=True)
 
-    def process(self, params_set, filename, predictions: pd.DataFrame):
+    def process(self, params_set, stat: TrainingEpochStats, filename, predictions: pd.DataFrame):
         val_df = read_dataset(self._val_filepath, header=0)
         predictions_iter = iter(predictions.iloc)
         val_iter = iter(val_df.iloc)
@@ -57,7 +59,8 @@ class LabelsAndPredsCryptoAccuracy(LabelsAndPredsProcessor):
             f'{increase_success.get_rate() * 100: 0.3f}%',
             decrease_success.get_right(),
             decrease_success.get_total(),
-            f'{decrease_success.get_rate() * 100: 0.3f}%'])
+            f'{decrease_success.get_rate() * 100: 0.3f}%',
+            stat.get_val_loss()])
 
     @staticmethod
     def get_last_close_col(cols: list[str]) -> str:

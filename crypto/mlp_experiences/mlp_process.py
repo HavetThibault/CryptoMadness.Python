@@ -1,5 +1,5 @@
 from helper_sdk.csv_helper import read_headers
-from helper_sdk.work_progress_state import WorkProgressState, default_progress_display
+from helper_sdk.work_progress_state import WorkProgressState, default_progress_display, get_default_progress_state
 from ml_sdk.analyze.analyze import analyze
 from ml_sdk.analyze.reg_model_labels_and_preds_instantiator import RegModelLabelsAndPredsInstantiator
 from ml_sdk.dataset.file.file_record_field_type import RecordFieldType
@@ -64,8 +64,7 @@ def classification_mlp_process(
         get_early_stopping(min_delta, stop_patience)
     ]
 
-    progress = WorkProgressState(len(params_sets) * repeat, 1)
-    progress.add_listener(default_progress_display)
+    progress = get_default_progress_state(len(params_sets) * repeat)
     run_trainings(
         params_sets,
         model_creator,
@@ -151,8 +150,7 @@ def regression_mlp_process(
         get_early_stopping(min_delta, stop_patience)
     ]
 
-    progress = WorkProgressState(len(params_sets) * repeat, 1)
-    progress.add_listener(default_progress_display)
+    progress = get_default_progress_state(len(params_sets) * repeat)
     run_trainings(
         params_sets,
         model_creator,
